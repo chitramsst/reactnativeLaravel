@@ -1,0 +1,79 @@
+
+
+
+
+npx @react-native-community/cli@latest init MyProject --version latest
+
+npx react-native doctor ( to check dependencies)
+
+___________________________________
+To fix the sdk JAVA Home version issue
+
+/usr/libexec/java_home -V
+export JAVA_HOME=/Users/chitra/Library/Java/JavaVirtualMachines/openjdk-20.0.1/Contents/Home 
+Error
+
+/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+
+
+npx react-native run-android  
+
+
+nano ~/.zshrc
+
+
+export ANDROID_HOME=/Users/chitra/Library/Android/sdk
+export ANDROID_SDK_ROOT=$ANDROID_HOME
+export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+export PATH=$JAVA_HOME/bin:$PATH
+
+
+Ctrl x y for save
+
+
+To fix grade issue:
+
+Cd android
+./gradlew clean
+___________
+
+
+Run instructions for Android:
+    • Have an Android emulator running (quickest way to get started), or a device connected.
+    • cd "/Users/chitra/Documents/chitra_study/react-native/study/MyProject" && npx react-native run-android
+  
+  Run instructions for iOS:
+    • cd "/Users/chitra/Documents/chitra_study/react-native/study/MyProject"
+    
+    • npx react-native run-ios
+    - or -
+    • Open MyProject/ios/MyProject.xcworkspace in Xcode or run "xed -b ios"
+    • Hit the Run button
+    
+
+
+important
+https://medium.com/swlh/handling-asynchronous-actions-with-redux-thunk-86b8d8e0b83e
+
+
+npm install redux 
+npm install react-redux 
+npm install redux-thunk 
+npm install axios
+npm install @react-navigation/native 
+npm install @react-navigation/stack 
+npm install react-native-screens 
+npm install react-native-gesture-handler
+npm install react-native-safe-area-context
+
+npm install react-native-gesture-handler react-native-reanimated react-native-safe-area-context
+
+
+android/settings.gradle (must)
+
+apply from: file("$rootDir/../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+
+
+127.0.0.1 inside the emulator refers to the emulator itself.
+10.0.2.2 is a special alias that allows the emulator to talk to your computer’s localhost.
