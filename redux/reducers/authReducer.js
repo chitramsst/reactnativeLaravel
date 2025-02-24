@@ -16,6 +16,7 @@ const authReducer = (state = initialState, action) => {
         isAuthenticated: true,
       };
 
+      
     case LOGOUT:
       return {
         ...state,

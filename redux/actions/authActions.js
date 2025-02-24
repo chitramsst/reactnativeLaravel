@@ -6,7 +6,7 @@ const API_URL =
 
 // Login Action
 export const login = (email, password) => async (dispatch) => {
- // console.log('Login Successful:', `${API_URL}/login`);
+  console.log('Login Successful:', `${API_URL}/login`);
   try {
     const response = await axios.post(`${API_URL}/login`, { email, password });
     console.log('Login Successful:', response.data);

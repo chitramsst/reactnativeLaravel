@@ -1,30 +1,17 @@
-import React from 'react';
-import { Provider, useSelector } from 'react-redux';
-import store from './redux/store';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import LoginScreen from './screens/LoginScreen';
-import DashboardScreen from './screens/DashboardScreen';
+import React from "react";
+import { Provider } from "react-redux";
+import { store, persistor } from "./redux/store.js"; // ✅ Make sure both are imported correctly
+import AppNavigator from "./screens/navigation/Navigator";
+import { PersistGate } from "redux-persist/integration/react";
 
-const Stack = createStackNavigator();
-
-const AppNavigator = () => {
-  const { isAuthenticated } = useSelector(state => state.auth);
-
+const App = () => {
   return (
-    <Stack.Navigator initialRouteName={isAuthenticated ? 'Dashboard' : 'Login'}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Dashboard" component={DashboardScreen} />
-    </Stack.Navigator>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <AppNavigator />
+      </PersistGate>
+    </Provider>
   );
 };
 
-export default function App() {
-  return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
-    </Provider>
-  );
-}
+export default App;

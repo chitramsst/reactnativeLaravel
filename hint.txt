@@ -77,3 +77,5 @@ apply from: file("$rootDir/../node_modules/@react-native-community/cli-platform-
 
 127.0.0.1 inside the emulator refers to the emulator itself.
 10.0.2.2 is a special alias that allows the emulator to talk to your computer’s localhost.
+
+npm install --save-dev @types/redux-persist
