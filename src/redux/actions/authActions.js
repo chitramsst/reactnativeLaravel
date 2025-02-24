@@ -8,8 +8,6 @@ export const login = (email, password) => async (dispatch) => {
   console.log('Login Successful:', `${API_URL}/login`);
   try {
     const response = await axios.post(`${API_URL}/login`, { email, password });
-    console.log('Login Successful:', response.data);
-
     if (response.data.token) {
       dispatch({
         type: LOGIN_SUCCESS,

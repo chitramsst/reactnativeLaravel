@@ -79,3 +79,18 @@ apply from: file("$rootDir/../node_modules/@react-native-community/cli-platform-
 10.0.2.2 is a special alias that allows the emulator to talk to your computer’s localhost.
 
 npm install --save-dev @types/redux-persist
+
+
+for ios
+
+open ios/MyReactNativeApp.xcworkspace
+
+
+1️⃣ Open the Project in Xcode & Build Manually
+Run:
+open ios/MyReactNativeApp.xcworkspace
+
+In Xcode, select your device/simulator (top bar).
+Click Product → Clean Build Folder (Shift + Cmd + K).
+Click Product → Build (Cmd + B).
+If there are any errors, fix them.
