@@ -1,13 +1,13 @@
-import axios from 'axios';
 import { LOGIN_SUCCESS, LOGOUT } from '../types';
-import API_URL from "../../config/api";
+import { api, API_URL } from "../../config/api"; // ✅ Ensure this path is correct
 
-
-// Login Action
+// ✅ Login Action
 export const login = (email, password) => async (dispatch) => {
-  console.log('Login Successful:', `${API_URL}/login`);
   try {
-    const response = await axios.post(`${API_URL}/login`, { email, password });
+    console.log('Login request:', `${API_URL}/login`);
+
+    const response = await api.post("/login", { email, password }); // ✅ Using api instance
+
     if (response.data.token) {
       dispatch({
         type: LOGIN_SUCCESS,
@@ -21,6 +21,7 @@ export const login = (email, password) => async (dispatch) => {
     );
   }
 };
+
 
 // Logout Action
 export const logout = () => async (dispatch) => {
