@@ -1,12 +1,12 @@
 import { LOGIN_SUCCESS, LOGOUT } from '../types';
-import { api, API_URL } from "../../config/api"; // ✅ Ensure this path is correct
+import { api, API_URL } from "../../config/api"; 
 
-// ✅ Login Action
+
 export const login = (email, password) => async (dispatch) => {
   try {
     console.log('Login request:', `${API_URL}/login`);
 
-    const response = await api.post("/login", { email, password }); // ✅ Using api instance
+    const response = await api.post("/login", { email, password }); 
 
     if (response.data.token) {
       dispatch({
@@ -23,7 +23,7 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 
-// Logout Action
+
 export const logout = () => async (dispatch) => {
   try {
     dispatch({ type: LOGOUT });

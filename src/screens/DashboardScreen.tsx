@@ -1,7 +1,7 @@
 import React, { useEffect, useState,  } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { api, API_URL } from '../config/api'; // ✅ Import custom Axios instance
+import { api, API_URL } from '../config/api'; 
 import { logout } from '../redux/actions/authActions';
 
 const DashboardScreen = ({ navigation }) => {
@@ -11,7 +11,7 @@ const DashboardScreen = ({ navigation }) => {
 
   const fetchUser = async () => {
     try {
-      const response = await api.get('/user'); // ✅ No need to manually set token
+      const response = await api.get('/user'); 
       setUserData(response.data.user);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -20,7 +20,7 @@ const DashboardScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigation.replace('Login');
+      navigation.replace('Home');
     } else {
       fetchUser();
     }
