@@ -20,7 +20,7 @@ const DashboardScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigation.replace('Home');
+      navigation.replace('Login');
     } else {
       fetchUser();
     }
@@ -43,9 +43,9 @@ const DashboardScreen = ({ navigation }) => {
       ) : (
         <Text style={styles.text}>Fetching user data...</Text>
       )}
-      <TouchableOpacity style={styles.button} onPress={handleLogout}>
+      {/* <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
