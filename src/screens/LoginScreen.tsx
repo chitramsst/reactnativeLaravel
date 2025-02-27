@@ -10,7 +10,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 const LoginScreen = () => {
   const navigation = useNavigation();
   const route = useRoute(); 
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
@@ -84,9 +84,11 @@ const styles = StyleSheet.create({
   logo: { width: 100, height: 100, marginBottom: 20, backgroundColor: 'transparent' },
   button: { 
     backgroundColor: '#193d52', padding: 12, width: '100%', 
-    alignItems: 'center', borderRadius: 5, marginTop: 10 
+    alignItems: 'center', borderRadius: 5, marginTop: 10 ,
+    fontFamily: 'DancingScript-Regular'
   },
   buttonText: { color: '#eaeff3', fontSize: 18, fontWeight: 'bold' },
 });
 
 export default LoginScreen;
+  

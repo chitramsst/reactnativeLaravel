@@ -94,3 +94,20 @@ In Xcode, select your device/simulator (top bar).
 Click Product → Clean Build Folder (Shift + Cmd + K).
 Click Product → Build (Cmd + B).
 If there are any errors, fix them.
+
+
+cd ios
+rm -rf Pods Podfile.lock
+pod cache clean --all
+pod install --verbose
+cd ..
+
+
+rm -rf node_modules package-lock.json
+rm -rf android/.gradle android/build android/app/build
+rm -rf ios/Pods ios/build
+
+
+
+rm -rf node_modules package-lock.json
+rm -rf android/.gradle android/build android/app/build
