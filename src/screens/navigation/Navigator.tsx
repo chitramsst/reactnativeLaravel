@@ -33,13 +33,13 @@ const DashboardTabNavigator = () => {
         }
         return <Ionicons name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: "#8DBC30",
-      tabBarInactiveTintColor: "gray",
+      tabBarActiveTintColor: "white",
+      tabBarInactiveTintColor: "black",
       tabBarStyle: {
-        backgroundColor: "white",
+        backgroundColor: "#5f75cc",
         height: 80, // Increased bottom bar height
-        borderTopLeftRadius: 20, // Rounded top-left
-        borderTopRightRadius: 20, // Rounded top-right
+        borderTopLeftRadius: 5, // Rounded top-left
+        borderTopRightRadius: 5, // Rounded top-right
         position: "absolute", // Ensure it stays at the bottom
         left: 0,
         right: 0,
