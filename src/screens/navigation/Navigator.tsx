@@ -1,11 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { logout } from '../../redux/actions/authActions';
-import { TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity, Text } from "react-native";
+import LogoutModal from "../components/Modals/LogoutModal";
+
 
 // Screens
 import LoginScreen from "../LoginScreen";
@@ -17,9 +19,32 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const DashboardTabNavigator = () => {
+  const [isLogoutVisible, setLogoutVisible] = useState(false);
   const dispatch = useDispatch();
 
+  // Function to handle logout confirmation
+  const handleLogout = () => {
+    Alert.alert(
+      "Confirm Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+          onPress: () => {}, // Keeps the alert open
+        },
+        {
+          text: "Logout",
+          onPress: () => dispatch(logout()),
+          style: "default",
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
+    <>
     <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarIcon: ({ color, size }) => {
@@ -56,17 +81,19 @@ const DashboardTabNavigator = () => {
     <Tab.Screen name="Dashboard" component={DashboardScreen} />
     <Tab.Screen name="Expenses" component={ExpenseScreen} />
     <Tab.Screen
-      name="Logout"
-      component={HomeScreen} // Redirect to Home after logout
-      listeners={{
-        tabPress: (e) => {
-          e.preventDefault(); // Prevent navigation
-          dispatch(logout());
-        },
-      }}
-    />
+          name="Logout"
+          component={HomeScreen}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault();
+              setLogoutVisible(true);
+            },
+          }}
+        />
+    
   </Tab.Navigator>
-  
+  <LogoutModal visible={isLogoutVisible} onClose={() => setLogoutVisible(false)} />
+  </>
   );
 };
 
