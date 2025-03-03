@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { api } from '../config/api';
 import { logout } from '../redux/actions/authActions';
@@ -64,6 +64,11 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.cardValue}>${total}</Text>
           <Text style={styles.cardTitle}>Balance in hand</Text>
         </View>
+
+{/* Expense Category Navigation */}
+<TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('ExpenseCategory')}>
+        <Ionicons name="list-outline" size={24} color="#3498db" />
+      </TouchableOpacity>
 
       </View>
     </View>

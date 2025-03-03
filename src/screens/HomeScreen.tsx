@@ -4,15 +4,28 @@ import {
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { designBackgoundColor } from "../utils/globalStyle"; // ✅ Corrected import name
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
   const { isAuthenticated } = useSelector(state => state.auth);
+    const navigation = useNavigation();
+    const route = useRoute();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.replace('Dashboard');
-    }
-  }, [isAuthenticated, navigation]);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     setTimeout(() => {
+  //       navigation.replace('Dashboard');
+  //     }, 0); // Ensures it runs after render cycle
+  //   }
+  // }, [isAuthenticated, navigation]);
+
+
+    useEffect(() => {
+      if (isAuthenticated && route.name !== 'Dashboard') {
+        navigation.replace('Dashboard');
+      }
+    }, [isAuthenticated, navigation, route.name]); 
+  
 
   const handleScreenPress = () => {
     navigation.navigate(isAuthenticated ? 'Dashboard' : 'Login');
