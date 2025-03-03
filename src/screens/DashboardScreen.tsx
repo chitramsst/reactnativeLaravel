@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { api } from '../config/api';
 import { logout } from '../redux/actions/authActions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {textColor, designBackgoundColor, designTextColor} from '../utils/globalStyle';
+import { textColor, designBackgoundColor, designTextColor } from '../utils/globalStyle';
 
 const DashboardScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -32,17 +32,29 @@ const DashboardScreen = ({ navigation }) => {
       {/* Cards Section */}
       <View style={styles.cardContainer}>
 
-        {/* Total Expenses - Bottom Border Color */}
+       
+
+        {/* Expense Category Navigation */}
+        <TouchableOpacity style={[styles.navButton, { backgroundColor: '#FB6E52', shadowColor: '#FB6E52' }]} onPress={() => navigation.navigate('ExpenseCategory')}>
+          <Ionicons name="list-outline" size={54} color="white" />
+          {/* <Text style={styles.navButtonText}>Expense Categories</Text>  */}
+        </TouchableOpacity>
+        {/* Expense Category Navigation */}
+        <TouchableOpacity
+          style={[styles.navButton, { backgroundColor: 'green', shadowColor: 'green' }]}
+          onPress={() => navigation.navigate('ExpenseCategory')}
+        >
+          <Ionicons name="list-outline" size={54} color="white" />
+          {/* <Text style={styles.navButtonText}>Expense Categories</Text>  */}
+        </TouchableOpacity>
+
+         {/* Total Expenses - Bottom Border Color */}
         <View style={[styles.card, styles.bottomBorderCard]}>
           <Ionicons name="wallet-outline" size={30} color="green" />
           <Text style={styles.cardValue}>${expenseData.monthlyBudget}</Text>
           <Text style={styles.cardTitle}>Total Income</Text>
         </View>
-        {/* <View style={[styles.card, styles.bottomBorderCard]}>
-          <Ionicons name="wallet-outline" size={30} color="#8DBC30" />
-          <Text style={styles.cardTitle}>Total Expenses</Text>
-          <Text style={styles.cardValue}>${expenseData.totalExpenses}</Text>
-        </View> */}
+
 
         {/* Monthly Budget - Bottom Border Color */}
         <View style={[styles.card, styles.bottomBorderCard]}>
@@ -64,12 +76,6 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.cardValue}>${total}</Text>
           <Text style={styles.cardTitle}>Balance in hand</Text>
         </View>
-
-{/* Expense Category Navigation */}
-<TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('ExpenseCategory')}>
-        <Ionicons name="list-outline" size={24} color="#3498db" />
-      </TouchableOpacity>
-
       </View>
     </View>
   );
@@ -103,9 +109,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 20},
+    shadowOffset: { width: 0, height: 20 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
+    marginTop : 20
   },
 
   // Bottom Border Colored Card
@@ -119,6 +126,20 @@ const styles = StyleSheet.create({
   // Card Titles & Values
   cardTitle: { fontSize: 10, fontWeight: 'bold', marginTop: 10, color: 'gray' },
   cardValue: { fontSize: 16, fontWeight: 'bold', color: textColor, marginTop: 5 },
+  
+  // Navigation Button
+  navButton: {
+    flexDirection: 'column',
+    alignItems: 'center',
+
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+
+    shadowOpacity: 50,
+    width: 150
+  },
+  navButtonText: { color: 'white', fontSize: 13, marginLeft: 10, fontWeight: 'bold', textAlign: "center" },
 });
 
 export default DashboardScreen;

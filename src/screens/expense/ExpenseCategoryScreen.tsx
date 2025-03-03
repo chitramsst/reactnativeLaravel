@@ -4,6 +4,8 @@ import {
 } from "react-native";
 import { api } from "../../config/api"; // Import Axios instance
 import Ionicons from "react-native-vector-icons/Ionicons";
+import {textColor, designBackgoundColor, designTextColor} from '../../utils/globalStyle';
+
 
 const ExpenseCategoryScreen = () => {
   const [categories, setCategories] = useState([]);
@@ -47,7 +49,9 @@ const ExpenseCategoryScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Expense Categories</Text>
+      <View style={styles.titleContainer}>
+             <Text style={styles.title}>Expense Category</Text>
+           </View>
 
       {loading ? (
         <ActivityIndicator size="large" color="blue" />
@@ -100,14 +104,24 @@ const ExpenseCategoryScreen = () => {
 export default ExpenseCategoryScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#f8f9fa" },
-  title: { fontSize: 20, fontWeight: "bold", marginBottom: 20, textAlign: "center" },
+    container: { flex: 1,  backgroundColor: '#f8f9fa' },
+   // Title Styles (No Padding)
+   titleContainer: {
+    backgroundColor: designBackgoundColor,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 20,
+    elevation: 5,
+    // borderBottomLeftRadius: 20, // Rounded top-left
+    // borderBottomRightRadius: 20
+  },
+  title: { fontSize: 19, fontWeight: 'bold', color: designTextColor, paddingVertical: 30, paddingTop: 50 },
   categoryItem: { 
     backgroundColor: "#fff", 
     padding: 15, 
     marginBottom: 10, 
     borderRadius: 5, 
-    elevation: 2 // Adds slight shadow
+    elevation: 2,
   },
   categoryText: { fontSize: 16 },
   floatingButton: {
