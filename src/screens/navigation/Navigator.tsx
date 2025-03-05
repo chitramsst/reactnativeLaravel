@@ -64,9 +64,9 @@ const DashboardTabNavigator = () => {
           tabBarInactiveTintColor: "black",
           tabBarStyle: {
             backgroundColor: "#5f75cc",
-            height: 80, 
-            borderTopLeftRadius: 5,
-            borderTopRightRadius: 5,
+            height: 80,
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
             position: "absolute",
             left: 0,
             right: 0,
@@ -76,6 +76,15 @@ const DashboardTabNavigator = () => {
             paddingBottom: 15,
             paddingTop: 10,
             borderTopWidth: 0,
+
+            // ✅ Correct Shadow Properties
+            shadowColor: "#000", // Darker shadow for visibility
+            shadowOffset: { width: 0, height: 5 }, // Move shadow downward
+            shadowOpacity: 0.3, // Adjust opacity
+            shadowRadius: 10, // Spread the shadow
+
+            // ✅ Android-specific shadow
+            elevation: 10,
           },
           headerShown: false,
         })}

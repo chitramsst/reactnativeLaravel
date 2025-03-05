@@ -69,7 +69,7 @@ const DashboardScreen = ({ navigation }) => {
         >
             <Ionicons name="list-outline" size={30} color="white" />
         </TouchableOpacity>
-        <Text style={[styles.navButtonText,{color:'#FB6E52'}]}>Categories</Text>  
+        <Text style={[styles.navButtonText,{color:'black'}]}>Categories</Text>  
     </View>
 
     {/* Another Expense Category Navigation */}
@@ -80,7 +80,7 @@ const DashboardScreen = ({ navigation }) => {
         >
             <Ionicons name="list-outline" size={30} color="white" />
         </TouchableOpacity>
-        <Text style={[styles.navButtonText,{color:'green'}]}>Expenses</Text>
+        <Text style={[styles.navButtonText,{color:'black'}]}>Expenses</Text>
     </View>
 
         {/* Another Expense Category Navigation */}
@@ -91,7 +91,7 @@ const DashboardScreen = ({ navigation }) => {
         >
             <Ionicons name="list-outline" size={30} color="white" />
         </TouchableOpacity>
-        <Text style={[styles.navButtonText,{color:'gray'}]}>Savings</Text>
+        <Text style={[styles.navButtonText,{color:'black'}]}>Savings</Text>
     </View>
 
         {/* Another Expense Category Navigation */}
@@ -102,7 +102,7 @@ const DashboardScreen = ({ navigation }) => {
         >
             <Ionicons name="list-outline" size={30} color="white" />
         </TouchableOpacity>
-        <Text style={[styles.navButtonText,{color:'purple'}]}>Reminders</Text>
+        <Text style={[styles.navButtonText,{color:'black'}]}>Reminders</Text>
     </View>
 </View>
 
@@ -111,7 +111,7 @@ const DashboardScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', backgroundColor: '#f8f9fa' },
+  container: { flex: 1, alignItems: 'center', backgroundColor: designBackgoundColor },
 
   // Title Styles (No Padding)
   titleContainer: {
