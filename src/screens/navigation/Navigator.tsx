@@ -7,6 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { logout } from '../../redux/actions/authActions';
 import { Alert } from "react-native";
 import LogoutModal from "../components/Modals/LogoutModal";
+import {designBottomBarColor} from '../../utils/globalStyle'
 
 // Screens
 import LoginScreen from "../LoginScreen";
@@ -63,7 +64,7 @@ const DashboardTabNavigator = () => {
           tabBarActiveTintColor: "white",
           tabBarInactiveTintColor: "black",
           tabBarStyle: {
-            backgroundColor: "#5f75cc",
+            backgroundColor: designBottomBarColor,
             height: 80,
             borderTopLeftRadius: 10,
             borderTopRightRadius: 10,

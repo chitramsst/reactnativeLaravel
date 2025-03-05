@@ -104,6 +104,16 @@ const DashboardScreen = ({ navigation }) => {
         </TouchableOpacity>
         <Text style={[styles.navButtonText,{color:'black'}]}>Reminders</Text>
     </View>
+
+    <View style={styles.navButtonWrapper}>
+        <TouchableOpacity
+            style={[styles.navButton, { backgroundColor: 'gold', shadowColor: 'gold' }]}
+            onPress={() => navigation.navigate('ExpenseCategory')}
+        >
+            <Ionicons name="list-outline" size={30} color="white" />
+        </TouchableOpacity>
+        <Text style={[styles.navButtonText,{color:'black'}]}>Note</Text>
+    </View>
 </View>
 
     </View>
