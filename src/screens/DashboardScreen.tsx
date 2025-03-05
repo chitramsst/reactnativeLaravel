@@ -31,23 +31,6 @@ const DashboardScreen = ({ navigation }) => {
 
       {/* Cards Section */}
       <View style={styles.cardContainer}>
-
-       
-
-        {/* Expense Category Navigation */}
-        <TouchableOpacity style={[styles.navButton, { backgroundColor: '#FB6E52', shadowColor: '#FB6E52' }]} onPress={() => navigation.navigate('ExpenseCategory')}>
-          <Ionicons name="list-outline" size={54} color="white" />
-          {/* <Text style={styles.navButtonText}>Expense Categories</Text>  */}
-        </TouchableOpacity>
-        {/* Expense Category Navigation */}
-        <TouchableOpacity
-          style={[styles.navButton, { backgroundColor: 'green', shadowColor: 'green' }]}
-          onPress={() => navigation.navigate('ExpenseCategory')}
-        >
-          <Ionicons name="list-outline" size={54} color="white" />
-          {/* <Text style={styles.navButtonText}>Expense Categories</Text>  */}
-        </TouchableOpacity>
-
          {/* Total Expenses - Bottom Border Color */}
         <View style={[styles.card, styles.bottomBorderCard]}>
           <Ionicons name="wallet-outline" size={30} color="green" />
@@ -77,6 +60,52 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.cardTitle}>Balance in hand</Text>
         </View>
       </View>
+      <View style={styles.navigationContainer}>
+    {/* Expense Category Navigation */}
+    <View style={styles.navButtonWrapper}>
+        <TouchableOpacity 
+            style={[styles.navButton, { backgroundColor: '#FB6E52', shadowColor: '#FB6E52' }]} 
+            onPress={() => navigation.navigate('ExpenseCategory')}
+        >
+            <Ionicons name="list-outline" size={30} color="white" />
+        </TouchableOpacity>
+        <Text style={[styles.navButtonText,{color:'#FB6E52'}]}>Categories</Text>  
+    </View>
+
+    {/* Another Expense Category Navigation */}
+    <View style={styles.navButtonWrapper}>
+        <TouchableOpacity
+            style={[styles.navButton, { backgroundColor: 'green', shadowColor: 'green' }]}
+            onPress={() => navigation.navigate('ExpenseCategory')}
+        >
+            <Ionicons name="list-outline" size={30} color="white" />
+        </TouchableOpacity>
+        <Text style={[styles.navButtonText,{color:'green'}]}>Expenses</Text>
+    </View>
+
+        {/* Another Expense Category Navigation */}
+        <View style={styles.navButtonWrapper}>
+        <TouchableOpacity
+            style={[styles.navButton, { backgroundColor: 'gray', shadowColor: 'gray' }]}
+            onPress={() => navigation.navigate('ExpenseCategory')}
+        >
+            <Ionicons name="list-outline" size={30} color="white" />
+        </TouchableOpacity>
+        <Text style={[styles.navButtonText,{color:'gray'}]}>Savings</Text>
+    </View>
+
+        {/* Another Expense Category Navigation */}
+        <View style={styles.navButtonWrapper}>
+        <TouchableOpacity
+            style={[styles.navButton, { backgroundColor: 'purple', shadowColor: 'purple' }]}
+            onPress={() => navigation.navigate('ExpenseCategory')}
+        >
+            <Ionicons name="list-outline" size={30} color="white" />
+        </TouchableOpacity>
+        <Text style={[styles.navButtonText,{color:'purple'}]}>Reminders</Text>
+    </View>
+</View>
+
     </View>
   );
 };
@@ -89,12 +118,12 @@ const styles = StyleSheet.create({
     backgroundColor: designBackgoundColor,
     width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
     elevation: 5,
     // borderBottomLeftRadius: 20, // Rounded top-left
     // borderBottomRightRadius: 20
   },
-  title: { fontSize: 19, fontWeight: 'bold', color: designTextColor, paddingVertical: 30, paddingTop: 50 },
+  title: { fontSize: 19, fontWeight: 'bold', color: designTextColor, paddingVertical: 10, paddingTop: 50 },
 
   // Cards Section
   cardContainer: { padding: 20, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%' },
@@ -112,7 +141,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 20 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    marginTop : 20
+    marginTop : 5
   },
 
   // Bottom Border Colored Card
@@ -127,19 +156,43 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 10, fontWeight: 'bold', marginTop: 10, color: 'gray' },
   cardValue: { fontSize: 16, fontWeight: 'bold', color: textColor, marginTop: 5 },
   
-  // Navigation Button
-  navButton: {
-    flexDirection: 'column',
-    alignItems: 'center',
+// Cards Section
+navigationContainer: { 
+  padding: 20, 
+  flexDirection: 'row', 
+  flexWrap: 'wrap', 
+  justifyContent: 'flex-start',  
+  gap: 15,  
+  width: '100%',
+},
 
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
+// Wrapper for Button & Text
+navButtonWrapper: {
+  alignItems: 'center',
+  width: '21%',  // Ensures up to 4 items per row
+},
 
-    shadowOpacity: 50,
-    width: 150
-  },
-  navButtonText: { color: 'white', fontSize: 13, marginLeft: 10, fontWeight: 'bold', textAlign: "center" },
+// Navigation Button (Card)
+navButton: {
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: 10,  
+  borderRadius: 10,
+  shadowOpacity: 0.5,  
+  width: '70%',  // Makes the button fill the wrapper
+  aspectRatio: 1,  // Ensures a square shape
+  backgroundColor: '#fff',
+},
+
+// Navigation Button Text (Below the Card)
+navButtonText: {
+  marginTop: 8,  // Space between button and text
+  fontSize: 12,  
+  fontWeight: 'semibold',
+  textAlign: 'center',
+  color: '#333',
+}
+
 });
 
 export default DashboardScreen;
