@@ -7,7 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { logout } from '../../redux/actions/authActions';
 import { Alert } from "react-native";
 import LogoutModal from "../components/Modals/LogoutModal";
-import {designBottomBarColor} from '../../utils/globalStyle'
+import {designBottomBarColor, primaryColor, secondaryColor} from '../../utils/globalStyle'
 
 // Screens
 import LoginScreen from "../LoginScreen";
@@ -61,8 +61,8 @@ const DashboardTabNavigator = () => {
             }
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: "white",
-          tabBarInactiveTintColor: "black",
+          tabBarActiveTintColor: primaryColor,
+          tabBarInactiveTintColor: secondaryColor,
           tabBarStyle: {
             backgroundColor: designBottomBarColor,
             height: 80,

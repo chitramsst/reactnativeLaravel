@@ -6,7 +6,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/actions/authActions';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { designBackgoundColor } from '../utils/globalStyle'; 
+import { designBackgoundColor, primaryColor, secondaryColor, buttonColor, buttonTextColor } from '../utils/globalStyle'; 
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -42,7 +42,7 @@ const LoginScreen = () => {
           <TextInput 
             style={styles.input} 
             placeholder="Email" 
-            placeholderTextColor="lightgray"
+            placeholderTextColor={secondaryColor}
             value={email} 
             onChangeText={setEmail} 
             keyboardType="email-address"
@@ -51,7 +51,7 @@ const LoginScreen = () => {
           <TextInput 
             style={styles.input} 
             placeholder="Password" 
-            placeholderTextColor="lightgray"
+            placeholderTextColor={secondaryColor}
             value={password} 
             onChangeText={setPassword} 
             secureTextEntry
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     fontSize: 24, 
     marginBottom: 20, 
     fontWeight: 'bold', 
-    color: 'white',   
+    color: primaryColor,   
     fontFamily: Platform.OS === 'ios' ? 'DancingScript' : 'DancingScript-Regular' // ✅ Fixed font handling
   },
   input: { 
@@ -89,11 +89,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, 
     marginBottom: 20, 
     paddingHorizontal: 10, 
-    color: 'white', 
+    color: primaryColor, 
     borderBottomColor: 'lightgray' 
   },
   button: { 
-    backgroundColor: '#1f3b8b', 
+    backgroundColor: buttonColor, 
     padding: 12, 
     width: '100%', 
     alignItems: 'center', 
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: { 
-    color: '#eaeff3', 
+    color: buttonTextColor, 
     fontSize: 18, 
     fontWeight: 'bold' 
   },

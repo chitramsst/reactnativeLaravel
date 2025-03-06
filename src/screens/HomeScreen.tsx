@@ -3,7 +3,7 @@ import {
   View, Text, Image, StyleSheet, TouchableWithoutFeedback 
 } from 'react-native';
 import { useSelector } from 'react-redux';
-import { designBackgoundColor } from "../utils/globalStyle"; // ✅ Corrected import name
+import { designBackgoundColor, primaryColor, secondaryColor } from "../utils/globalStyle"; // ✅ Corrected import name
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const HomeScreen = () => {
@@ -68,12 +68,12 @@ const styles = StyleSheet.create({
   title: { 
     fontSize: 26, 
     fontWeight: 'bold', 
-    color: 'white', 
+    color: primaryColor, 
     textAlign: 'center' 
   },
   subtitle: {
     fontSize: 14, 
-    color: 'lightgray', 
+    color: secondaryColor, 
     marginTop: 10, 
     textAlign: 'center'
   }
