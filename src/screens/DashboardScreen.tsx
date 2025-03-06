@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { api } from '../config/api';
 import { logout } from '../redux/actions/authActions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor } from '../utils/globalStyle';
+import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../utils/globalStyle';
 
 const DashboardScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -27,6 +27,7 @@ const DashboardScreen = ({ navigation }) => {
       {/* Title Section */}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Dashboard</Text>
+        <Text style={styles.subTitle}>Welcome here!</Text>
       </View>
 
       {/* Cards Section */}
@@ -126,22 +127,23 @@ const DashboardScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', backgroundColor: designBackgoundColor },
+  container: { flex: 1,  backgroundColor: designBackgoundColor, padding: 10 },
 
   // Title Styles (No Padding)
   titleContainer: {
     backgroundColor: designBackgoundColor,
     width: '100%',
-    alignItems: 'center',
+    //alignItems: 'center',
     marginBottom: 10,
     elevation: 5,
     // borderBottomLeftRadius: 20, // Rounded top-left
     // borderBottomRightRadius: 20
   },
-  title: { fontSize: 19, fontWeight: 'bold', color: primaryColor, paddingVertical: 10, paddingTop: 50 },
+  title: { fontSize: 25, fontWeight: 'bold', color: primaryColor, paddingHorizontal: 10, paddingTop: 50 },
+  subTitle: { fontSize: 15, color: secondaryColor, paddingHorizontal: 10, paddingVertical:5 },
 
   // Cards Section
-  cardContainer: { padding: 20, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%' },
+  cardContainer: { padding: 10, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%' },
 
   // Default Card Style
   card: {
