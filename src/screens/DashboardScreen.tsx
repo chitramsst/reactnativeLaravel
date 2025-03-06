@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   subTitle: { fontSize: 15, color: secondaryColor, paddingHorizontal: 10, paddingVertical:5 },
 
   // Cards Section
-  cardContainer: { padding: 17, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%', backgroundColor: 'black', borderRadius:10 },
+  cardContainer: { padding: 17, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%', backgroundColor: '', borderRadius:10 },
 
   // Default Card Style
   card: {
