@@ -4,7 +4,7 @@ import {
 } from "react-native";
 import { api } from "../../config/api"; // Import Axios instance
 import Ionicons from "react-native-vector-icons/Ionicons";
-import {textColor, designBackgoundColor, designTextColor} from '../../utils/globalStyle';
+import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../../utils/globalStyle';
 
 
 const ExpenseCategoryScreen = () => {
@@ -49,9 +49,12 @@ const ExpenseCategoryScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* Title Section */}
       <View style={styles.titleContainer}>
-             <Text style={styles.title}>Expense Category</Text>
-           </View>
+        <Text style={styles.title}>Expense Category</Text>
+        <Text style={styles.subTitle}>Welcome here!</Text>
+      </View>
+
 
       {loading ? (
         <ActivityIndicator size="large" color="blue" />
@@ -104,26 +107,30 @@ const ExpenseCategoryScreen = () => {
 export default ExpenseCategoryScreen;
 
 const styles = StyleSheet.create({
-    container: { flex: 1,  backgroundColor: '#f8f9fa' },
-   // Title Styles (No Padding)
-   titleContainer: {
-    backgroundColor: designBackgoundColor,
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 20,
-    elevation: 5,
-    // borderBottomLeftRadius: 20, // Rounded top-left
-    // borderBottomRightRadius: 20
-  },
-  title: { fontSize: 19, fontWeight: 'bold', color: designTextColor, paddingVertical: 30, paddingTop: 50 },
+    container: { flex: 1,  backgroundColor: designBackgoundColor, padding: 10 },
+   
+     // Title Styles (No Padding)
+     titleContainer: {
+       backgroundColor: designBackgoundColor,
+       width: '100%',
+       //alignItems: 'center',
+       marginBottom: 10,
+       elevation: 5,
+       // borderBottomLeftRadius: 20, // Rounded top-left
+       // borderBottomRightRadius: 20
+     },
+     title: { fontSize: 25, fontWeight: 'bold', color: primaryColor, paddingHorizontal: 10, paddingTop: 50 },
+     subTitle: { fontSize: 15, color: secondaryColor, paddingHorizontal: 10, paddingVertical:5 },
+   
+   
   categoryItem: { 
-    backgroundColor: "#fff", 
+    backgroundColor: "black", 
     padding: 15, 
     marginBottom: 10, 
     borderRadius: 5, 
     elevation: 2,
   },
-  categoryText: { fontSize: 16 },
+  categoryText: { fontSize: 16, color: primaryColor },
   floatingButton: {
     position: "absolute",
     bottom: 90, // Adjusted to stay above the tab bar
