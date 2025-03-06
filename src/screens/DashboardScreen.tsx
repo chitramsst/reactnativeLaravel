@@ -68,58 +68,62 @@ const DashboardScreen = ({ navigation }) => {
       </View>
       <View style={styles.navigationContainer}>
     {/* Expense Category Navigation */}
-    {/* <View style={styles.navButtonWrapper}>
+    <View style={styles.navButtonWrapper}>
         <TouchableOpacity 
-            style={[styles.navButton, { backgroundColor: '#26e5e2', shadowColor: '#26e5e2' }]} 
+            style={[styles.navButton]} 
             onPress={() => navigation.navigate('ExpenseCategory')}
         >
-            <Ionicons name="list-outline" size={30} color="white" />
+            <Ionicons name="list-outline" size={24} color={buttonTextColor} />
         </TouchableOpacity>
-        <Text style={[styles.navButtonText,{color:'black'}]}>Categories</Text>  
-    </View> */}
+        <Text style={[styles.navButtonText]}>Categories</Text>  
+    </View>
+
+    <View style={styles.navButtonWrapper}>
+        <TouchableOpacity 
+            style={[styles.navButton]} 
+            onPress={() => navigation.navigate('ExpenseCategory')}
+        >
+            <Ionicons name="wallet-outline" size={24} color={buttonTextColor} />
+        </TouchableOpacity>
+        <Text style={[styles.navButtonText]}>Incomes</Text>  
+    </View>
+
+
+        {/* Another Expense Category Navigation */}
+        <View style={styles.navButtonWrapper}>
+        <TouchableOpacity 
+            style={[styles.navButton]} 
+            onPress={() => navigation.navigate('ExpenseCategory')}
+        >
+            <Ionicons name="diamond" size={24} color={buttonTextColor} />
+        </TouchableOpacity>
+        <Text style={[styles.navButtonText]}>Savings</Text>  
+    </View>
 
     {/* Another Expense Category Navigation */}
-    {/* <View style={styles.navButtonWrapper}>
-        <TouchableOpacity
-            style={[styles.navButton, { backgroundColor: 'green', shadowColor: 'green' }]}
+    <View style={styles.navButtonWrapper}>
+        <TouchableOpacity 
+            style={[styles.navButton]} 
             onPress={() => navigation.navigate('ExpenseCategory')}
         >
-            <Ionicons name="list-outline" size={30} color="white" />
+            <Ionicons name="checkmark-circle" size={24} color={buttonTextColor} />
         </TouchableOpacity>
-        <Text style={[styles.navButtonText,{color:'black'}]}>Expenses</Text>
-    </View> */}
+        <Text style={[styles.navButtonText]}>Notes</Text>  
+    </View>
+
 
         {/* Another Expense Category Navigation */}
-        {/* <View style={styles.navButtonWrapper}>
-        <TouchableOpacity
-            style={[styles.navButton, { backgroundColor: 'gray', shadowColor: 'gray' }]}
+        <View style={styles.navButtonWrapper}>
+        <TouchableOpacity 
+            style={[styles.navButton]} 
             onPress={() => navigation.navigate('ExpenseCategory')}
         >
-            <Ionicons name="list-outline" size={30} color="white" />
+            <Ionicons name="alarm" size={24} color={buttonTextColor} />
         </TouchableOpacity>
-        <Text style={[styles.navButtonText,{color:'black'}]}>Savings</Text>
-    </View> */}
+        <Text style={[styles.navButtonText]}>Remainder</Text>  
+    </View>
 
-        {/* Another Expense Category Navigation */}
-        {/* <View style={styles.navButtonWrapper}>
-        <TouchableOpacity
-            style={[styles.navButton, { backgroundColor: 'purple', shadowColor: 'purple' }]}
-            onPress={() => navigation.navigate('ExpenseCategory')}
-        >
-            <Ionicons name="list-outline" size={30} color="white" />
-        </TouchableOpacity>
-        <Text style={[styles.navButtonText,{color:'black'}]}>Reminders</Text>
-    </View> */}
-
-    {/* <View style={styles.navButtonWrapper}>
-        <TouchableOpacity
-            style={[styles.navButton, { backgroundColor: 'gold', shadowColor: 'gold' }]}
-            onPress={() => navigation.navigate('ExpenseCategory')}
-        >
-            <Ionicons name="list-outline" size={30} color="white" />
-        </TouchableOpacity>
-        <Text style={[styles.navButtonText,{color:'black'}]}>Note</Text>
-    </View> */}
+    
 </View>
 
     </View>
@@ -143,7 +147,7 @@ const styles = StyleSheet.create({
   subTitle: { fontSize: 15, color: secondaryColor, paddingHorizontal: 10, paddingVertical:5 },
 
   // Cards Section
-  cardContainer: { padding: 17, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%', backgroundColor: '', borderRadius:10 },
+  cardContainer: { padding: 15, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%', backgroundColor: '', borderRadius:10 },
 
   // Default Card Style
   card: {
@@ -172,18 +176,21 @@ const styles = StyleSheet.create({
   
 // Cards Section
 navigationContainer: { 
-  padding: 20, 
   flexDirection: 'row', 
   flexWrap: 'wrap', 
   justifyContent: 'flex-start',  
-  gap: 15,  
   width: '100%',
+  backgroundColor: 'black',
+  padding: 20,
+  borderRadius: 20,
+  gap: 10
 },
 
 // Wrapper for Button & Text
 navButtonWrapper: {
   alignItems: 'center',
-  width: '21%',  // Ensures up to 4 items per row
+  width: '22%',  // Ensures up to 4 items per row
+  justifyContent: 'center'
 },
 
 // Navigation Button (Card)
@@ -204,7 +211,7 @@ navButtonText: {
   fontSize: 12,  
   fontWeight: 'semibold',
   textAlign: 'center',
-  color: '#333',
+  color: secondaryColor,
 }
 
 });
