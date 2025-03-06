@@ -51,7 +51,7 @@ const ExpenseCategoryScreen = () => {
     <View style={styles.container}>
       {/* Title Section */}
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Expense Category</Text>
+        <Text style={styles.title}>Expense Category 12123</Text>
         <Text style={styles.subTitle}>Welcome here!</Text>
       </View>
 
