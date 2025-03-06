@@ -100,7 +100,7 @@ const DashboardTabNavigator = () => {
       );
     },
     tabBarStyle: {
-      backgroundColor: designBottomBarColor,
+      backgroundColor: 'black',
       height: 65, // ✅ Adjusted for spacing
       borderTopLeftRadius: 15,
       borderTopRightRadius: 15,
