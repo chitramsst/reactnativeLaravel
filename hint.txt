@@ -111,3 +111,27 @@ rm -rf ios/Pods ios/build
 
 rm -rf node_modules package-lock.json
 rm -rf android/.gradle android/build android/app/build
+
+
+
+
+https://dribbble.com/shots/18427655-Finance-Dark-theme-Design
+
+Icons in ios
+
+[
+npm i --save-dev @types/react-native-vector-icons
+
+
+
+ios/{YourProject}/Info.plist
+<key>UIAppFonts</key> 
+<array> <string>Ionicons.ttf</string> </array>
+
+
+
+cd ios 
+pod install --repo-update 
+cd .. 
+npx react-native run-ios
+]

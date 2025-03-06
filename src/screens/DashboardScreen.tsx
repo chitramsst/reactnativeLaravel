@@ -40,20 +40,20 @@ const DashboardScreen = ({ navigation }) => {
         </View>
         {/* Monthly Budget - Bottom Border Color */}
         <View style={[styles.card, {backgroundColor: '#d5bbfc'}]}>
-          <Ionicons name="wallet-outline" size={30} color={buttonTextSecondaryColor} />
-          <Text style={styles.cardValue}>${expenseData.monthlyBudget}</Text>
-          <Text style={styles.cardTitle}>Total Income</Text>
+          <Ionicons name="briefcase-outline" size={30} color={buttonTextSecondaryColor} />
+          <Text style={styles.cardValue}>${expenseData.totalExpenses}</Text>
+          <Text style={styles.cardTitle}>Total Expenses</Text>
         </View>
 
         {/* Savings - Bottom Border Color */}
         <View style={[styles.card, {backgroundColor: '#edc8aa'}]}>
-          <Ionicons name="wallet-outline" size={30} color={buttonTextSecondaryColor} />
+          <Ionicons name="cash-outline" size={30} color={buttonTextSecondaryColor} />
           <Text style={styles.cardValue}>${expenseData.savings}</Text>
           <Text style={styles.cardTitle}>Balance In Hand</Text>
         </View>
 
           <View style={[styles.card, {backgroundColor: '#ffadae'}]}>
-          <Ionicons name="wallet-outline" size={30} color={buttonTextSecondaryColor} />
+          <Ionicons name="diamond" size={30} color={buttonTextSecondaryColor} />
           <Text style={styles.cardValue}>${total}</Text>
           <Text style={styles.cardTitle}>Savings</Text>
         </View>
