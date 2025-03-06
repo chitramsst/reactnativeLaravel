@@ -64,7 +64,7 @@ const DashboardTabNavigator = () => {
       const animatedScale = new Animated.Value(focused ? 1.2 : 1);
 
       Animated.spring(animatedScale, {
-        toValue: focused ? 1.2 : 1,
+        toValue: focused ? 1.4 : 1,
         friction: 5,
         useNativeDriver: true,
       }).start();
@@ -74,9 +74,9 @@ const DashboardTabNavigator = () => {
           style={{
             transform: [{ scale: animatedScale }], // ✅ Floating effect on select
             backgroundColor: focused ? "#ffadae" : "transparent", // ✅ Active tab color
-            width: size * 2.7, // ✅ Wide at the top
-            height: size * 2.7, // ✅ Taller for better balance
-            borderTopLeftRadius: size * 3, // ✅ Smooth rounded top
+            width: size * 2, // ✅ Wide at the top
+            height: size * 2, // ✅ Taller for better balance
+            borderTopLeftRadius: size , // ✅ Smooth rounded top
             borderTopRightRadius: size * 3, // ✅ Smooth rounded top
             borderBottomLeftRadius: size * 3, // ✅ Sharper drop bottom
             borderBottomRightRadius: size * 3, // ✅ Sharper drop bottom
