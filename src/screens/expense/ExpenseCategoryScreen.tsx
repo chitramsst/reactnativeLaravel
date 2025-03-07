@@ -33,7 +33,7 @@ const ExpenseCategoryScreen = () => {
     if (!categoryName.trim()) return;
     try {
       if (editCategory) {
-        await api.put(`/expense/expense-categories/edit/${editCategory.id}`, { name: categoryName });
+        await api.post(`/expense/expense-categories/edit/${editCategory.id}`, { name: categoryName });
         setCategories(categories.map(cat => cat.id === editCategory.id ? { ...cat, name: categoryName } : cat));
       } else {
         const response = await api.post("/expense/expense-categories/add", { name: categoryName });
@@ -168,14 +168,14 @@ const styles = StyleSheet.create({
   swipeActions: { flexDirection: 'row', justifyContent: 'flex-end' },
   editButton: { backgroundColor: secondaryColor, padding: 7, justifyContent: 'center', borderRadius:10, marginHorizontal:5},
   deleteButton: { backgroundColor: secondaryColor, padding: 7,justifyContent: 'center', borderRadius:10 },
-  modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" },
-  modalContent: { backgroundColor: "#fff", padding: 20, borderRadius: 10, width: "80%" },
-  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  input: { borderWidth: 1, borderColor: "#ccc", padding: 10, borderRadius: 5, marginBottom: 10 },
+  modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.8)" },
+  modalContent: { backgroundColor: "#1e1e1e", padding: 20, borderRadius: 10, width: "80%" },
+  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#fff" },
+  input: { borderWidth: 1, borderColor: "#444", padding: 10, borderRadius: 5, marginBottom: 10, color: "#fff" },
   modalButtons: { flexDirection: "row", justifyContent: "space-between" },
-  button: { backgroundColor: "#5f75cc", padding: 10, borderRadius: 5, flex: 1, alignItems: "center", marginHorizontal: 5 },
-  cancelButton: { backgroundColor: "#d9534f" },
-  buttonText: { color: "#fff", fontWeight: "bold" },
+  button: { backgroundColor: buttonColor, padding: 10, borderRadius: 5, flex: 1, alignItems: "center", marginHorizontal: 5 },
+  cancelButton: { backgroundColor: "#ffadae" },
+  buttonText: { color: buttonTextColor, fontWeight: "bold" },
   floatingButton: {
     position: "absolute",
     bottom: 90, // Adjusted to stay above the tab bar
