@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { 
   View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet, ActivityIndicator, ScrollView, Alert
 } from "react-native";
@@ -14,6 +14,7 @@ const ExpenseCategoryScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [editCategory, setEditCategory] = useState(null);
+  const swipeableRef = useRef(null);
 
   // Fetch categories from API
   const fetchCategories = async () => {
@@ -42,6 +43,7 @@ const ExpenseCategoryScreen = () => {
       setModalVisible(false);
       setCategoryName("");
       setEditCategory(null);
+      if (swipeableRef.current) swipeableRef.current.close();
     } catch (error) {
       console.error("Error saving category:", error.response?.data || error.message);
     }
@@ -131,6 +133,7 @@ const ExpenseCategoryScreen = () => {
                     setModalVisible(false);
                     setEditCategory(null);
                     setCategoryName("");
+                //    if (swipeableRef.current) swipeableRef.current.close();
                   }}
                 >
                   <Text style={styles.buttonText}>Cancel</Text>
