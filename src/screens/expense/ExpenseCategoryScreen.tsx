@@ -33,7 +33,7 @@ const ExpenseCategoryScreen = () => {
     if (!categoryName.trim()) return;
     try {
       if (editCategory) {
-        await api.put(`/expense/expense-categories/${editCategory.id}`, { name: categoryName });
+        await api.put(`/expense/expense-categories/edit/${editCategory.id}`, { name: categoryName });
         setCategories(categories.map(cat => cat.id === editCategory.id ? { ...cat, name: categoryName } : cat));
       } else {
         const response = await api.post("/expense/expense-categories/add", { name: categoryName });
@@ -50,7 +50,7 @@ const ExpenseCategoryScreen = () => {
   // Delete category
   const deleteCategory = async (id) => {
     try {
-      await api.delete(`/expense/expense-categories/${id}`);
+      await api.delete(`/expense/expense-categories/delete/${id}`);
       setCategories(categories.filter(cat => cat.id !== id));
     } catch (error) {
       console.error("Error deleting category:", error.response?.data || error.message);
@@ -68,10 +68,11 @@ const ExpenseCategoryScreen = () => {
         setCategoryName(item.name);
         setModalVisible(true);
       }}>
-        <Text style={styles.buttonText}>Edit</Text>
+         <Ionicons name="pencil" size={25} color='#d5bbfc' />
       </TouchableOpacity>
       <TouchableOpacity style={styles.deleteButton} onPress={() => deleteCategory(item.id)}>
-        <Text style={styles.buttonText}>Delete</Text>
+        {/* <Text style={styles.buttonText}>Delete</Text> */}
+        <Ionicons name="close" size={25} color='#ffadae' />
       </TouchableOpacity>
     </View>
   );
@@ -85,9 +86,9 @@ const ExpenseCategoryScreen = () => {
           <Text style={styles.title}>Expense Category</Text>
             <Text style={styles.subTitle}>Welcome here!</Text>
             </View>
-          <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-            <Ionicons name="add" size={30} color={primaryColor} />
-          </TouchableOpacity>
+          {/* <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+            <Ionicons name="add" size={25} color={buttonColor} />
+          </TouchableOpacity> */}
         </View>
 
         {loading ? (
@@ -105,6 +106,11 @@ const ExpenseCategoryScreen = () => {
             )}
           />
         )}
+
+     {/* Floating Button */}
+      <TouchableOpacity style={styles.floatingButton} onPress={() => setModalVisible(true)}>
+        <Ionicons name="add" size={30} color={buttonColor} />
+      </TouchableOpacity> 
 
         {/* Add/Edit Category Modal */}
         <Modal visible={modalVisible} animationType="slide" transparent>
@@ -156,12 +162,12 @@ const styles = StyleSheet.create({
   title: { fontSize: 25, fontWeight: 'bold', color: primaryColor },
   subTitle: { fontSize: 15, color: secondaryColor, paddingHorizontal: 2, paddingVertical:5 },
 
-  addButton: { padding: 5 },
-  categoryItem: { padding: 18, borderRadius: 5, elevation: 2, borderColor: secondaryColor, borderTopWidth: 0.3, justifyContent: 'center' },
+  addButton: { padding: 2, borderRadius: 5 },
+  categoryItem: { padding: 12, borderRadius: 5, elevation: 2, borderColor: secondaryColor, borderTopWidth: 0.3, justifyContent: 'center' },
   categoryText: { fontSize: 14, color: primaryColor },
   swipeActions: { flexDirection: 'row', justifyContent: 'flex-end' },
-  editButton: { backgroundColor: "#f0ad4e", padding: 10, borderRadius: 5, marginHorizontal: 5, justifyContent: 'center' },
-  deleteButton: { backgroundColor: "#d9534f", padding: 10, borderRadius: 5, justifyContent: 'center'  },
+  editButton: { backgroundColor: secondaryColor, padding: 7, justifyContent: 'center', borderRadius:10, marginHorizontal:5},
+  deleteButton: { backgroundColor: secondaryColor, padding: 7,justifyContent: 'center', borderRadius:10 },
   modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" },
   modalContent: { backgroundColor: "#fff", padding: 20, borderRadius: 10, width: "80%" },
   modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
@@ -170,4 +176,14 @@ const styles = StyleSheet.create({
   button: { backgroundColor: "#5f75cc", padding: 10, borderRadius: 5, flex: 1, alignItems: "center", marginHorizontal: 5 },
   cancelButton: { backgroundColor: "#d9534f" },
   buttonText: { color: "#fff", fontWeight: "bold" },
+  floatingButton: {
+    position: "absolute",
+    bottom: 90, // Adjusted to stay above the tab bar
+    right: 30,
+    backgroundColor: secondaryColor,
+  //  backgroundColor: "#5f75cc",
+    borderRadius: 50,
+    padding: 5,
+    elevation: 5,
+  },
 });
