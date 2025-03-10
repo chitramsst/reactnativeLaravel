@@ -5,7 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { logout } from '../../redux/actions/authActions';
-import { Alert, View, Animated } from "react-native";
+import { Alert, View, Animated, Text } from "react-native";
 import LogoutModal from "../components/Modals/LogoutModal";
 import {designBottomBarColor, primaryColor, secondaryColor} from '../../utils/globalStyle'
 
@@ -71,31 +71,41 @@ const DashboardTabNavigator = () => {
 
       return (
         <Animated.View
-          style={{
-            transform: [{ scale: animatedScale }], // ✅ Floating effect on select
-            backgroundColor: focused ? "#ffadae" : "transparent", // ✅ Active tab color
-            width: size * 2, // ✅ Wide at the top
-            height: size * 2, // ✅ Taller for better balance
-            borderTopLeftRadius: size , // ✅ Smooth rounded top
-            borderTopRightRadius: size * 1, // ✅ Smooth rounded top
-            borderBottomLeftRadius: size , // ✅ Sharper drop bottom
-            borderBottomRightRadius: size * 3, // ✅ Sharper drop bottom
-            alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            bottom: 0, // ✅ Align with tab bar bottom
-            shadowColor: focused ? "#ffadae" : "#000", // ✅ Glow when active
-            shadowOffset: { width: 0, height: 6 },
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            elevation: focused ? 10 : 5, // ✅ Soft lift when active
-          }}
+        style={{
+          transform: [{ scale: animatedScale }], // ✅ Floating effect on select
+          backgroundColor: focused ? "#ffadae" : "transparent", // ✅ Active tab color
+          width: focused ? size * 3.5 : size * 2, // ✅ Wider when active
+          height: 37, // ✅ Same as tab bar height
+          alignItems: "center",
+          justifyContent: "center",
+          bottom: 0, // ✅ Align with tab bar bottom
+          shadowColor: focused ? "#ffadae" : "#000", // ✅ Glow when active
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          paddingHorizontal: focused ? 30 : 10, // ✅ Extra 20px padding when active
+          paddingVertical: 1,
+          flexDirection: focused ? "row" : "column", 
+          borderRadius: 15,
+        }}
         >
           <Ionicons
             name={iconName}
             size={size/1.5} // ✅ Adjusted for perfect fit
-            color={focused ? "#221e23" : color}
-          />
+            color={focused ? "#0000000" : color}
+          /> 
+           {focused && (
+    <Text
+      style={{
+        color: "#221e23",
+        fontSize: size / 2.8,
+        marginLeft: 8, // ✅ Space between icon and text
+        fontWeight: "bold",
+      }}
+    >
+      test
+    </Text>
+  )}
         </Animated.View>
       );
     },
@@ -135,9 +145,6 @@ const DashboardTabNavigator = () => {
     }}
   />
 </Tab.Navigator>;
-
-
-
       {/* Logout Modal */}
       <LogoutModal visible={isLogoutVisible} onClose={() => setLogoutVisible(false)} />
     </>
