@@ -14,7 +14,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [editCategory, setEditCategory] = useState(null);
-  const swipeableRef = useRef(null);
+  const swipeableRefs = useRef({});
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -43,6 +43,9 @@ const ExpenseCategoryScreen = ({ navigation }) => {
       if (editCategory) {
         await api.post(`/expense/expense-categories/edit/${editCategory.id}`, { name: categoryName });
         setCategories(categories.map(cat => cat.id === editCategory.id ? { ...cat, name: categoryName } : cat));
+        if (editCategory && swipeableRefs.current[editCategory.id]) {
+          swipeableRefs.current[editCategory.id].close();
+        }
       } else {
         const response = await api.post("/expense/expense-categories/add", { name: categoryName });
         setCategories([response.data.data, ...categories]);
@@ -50,7 +53,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
       setModalVisible(false);
       setCategoryName("");
       setEditCategory(null);
-      if (swipeableRef.current) swipeableRef.current.close();
+     
     } catch (error) {
       console.error("Error saving category:", error.response?.data || error.message);
     }
@@ -71,6 +74,11 @@ const ExpenseCategoryScreen = ({ navigation }) => {
             try {
               await api.delete(`/expense/expense-categories/delete/${id}`);
               setCategories(categories.filter(cat => cat.id !== id));
+
+              if (swipeableRefs.current[id]) {
+                swipeableRefs.current[id].close();
+              }
+
             } catch (error) {
               console.error("Error deleting category:", error.response?.data || error.message);
             }
@@ -80,17 +88,6 @@ const ExpenseCategoryScreen = ({ navigation }) => {
       ]
     );
   };
-
-  
-  // // Delete category
-  // const deleteCategory = async (id) => {
-  //   try {
-  //     await api.delete(`/expense/expense-categories/delete/${id}`);
-  //     setCategories(categories.filter(cat => cat.id !== id));
-  //   } catch (error) {
-  //     console.error("Error deleting category:", error.response?.data || error.message);
-  //   }
-  // };
 
   useEffect(() => {
     fetchCategories();
@@ -147,13 +144,17 @@ const ExpenseCategoryScreen = ({ navigation }) => {
           <FlatList
             data={filteredCategories}
             keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
-            renderItem={({ item }) => (
-              <Swipeable renderRightActions={() => renderRightActions(item)}>
-                <View style={styles.categoryItem}>
-                  <Text style={styles.categoryText}>{item.name}</Text>
-                </View>
-              </Swipeable>
-            )}
+
+            renderItem={({ item }) => {
+            
+              return (
+                <Swipeable ref={(ref) => (swipeableRefs.current[item.id] = ref)}  renderRightActions={() => renderRightActions(item)}>
+                  <View style={styles.categoryItem}>
+                    <Text style={styles.categoryText}>{item.name}</Text>
+                  </View>
+                </Swipeable>
+              );
+            }}
           />
         )}
 
@@ -185,7 +186,6 @@ const ExpenseCategoryScreen = ({ navigation }) => {
                     setModalVisible(false);
                     setEditCategory(null);
                     setCategoryName("");
-                    //    if (swipeableRef.current) swipeableRef.current.close();
                   }}
                 >
                   <Text style={styles.buttonText}>Cancel</Text>
