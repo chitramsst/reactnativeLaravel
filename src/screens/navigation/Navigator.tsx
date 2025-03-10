@@ -77,8 +77,8 @@ const DashboardTabNavigator = () => {
             width: size * 2, // ✅ Wide at the top
             height: size * 2, // ✅ Taller for better balance
             borderTopLeftRadius: size , // ✅ Smooth rounded top
-            borderTopRightRadius: size * 3, // ✅ Smooth rounded top
-            borderBottomLeftRadius: size * 3, // ✅ Sharper drop bottom
+            borderTopRightRadius: size * 1, // ✅ Smooth rounded top
+            borderBottomLeftRadius: size , // ✅ Sharper drop bottom
             borderBottomRightRadius: size * 3, // ✅ Sharper drop bottom
             alignItems: "center",
             justifyContent: "center",

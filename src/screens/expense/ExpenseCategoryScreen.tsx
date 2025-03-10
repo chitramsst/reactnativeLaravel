@@ -8,13 +8,20 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../../utils/globalStyle';
 
-const ExpenseCategoryScreen = () => {
+const ExpenseCategoryScreen = ({ navigation }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [editCategory, setEditCategory] = useState(null);
   const swipeableRef = useRef(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+// Filtered categories based on search query
+const filteredCategories = categories.filter(cat =>
+  cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+);
 
   // Fetch categories from API
   const fetchCategories = async () => {
@@ -84,20 +91,35 @@ const ExpenseCategoryScreen = () => {
       <View style={styles.container}>
         {/* Title Section with Add Button */}
         <View style={styles.titleContainer}>
-          <View>
-          <Text style={styles.title}>Expense Category</Text>
-            <Text style={styles.subTitle}>Welcome here!</Text>
-            </View>
-          {/* <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-            <Ionicons name="add" size={25} color={buttonColor} />
-          </TouchableOpacity> */}
-        </View>
+  {/* Back Arrow Icon */}
+  <TouchableOpacity onPress={() => navigation.navigate("DashboardMain")} style={styles.backIcon}>
+    <Ionicons name="arrow-back" size={20} color={primaryColor} />
+  </TouchableOpacity>
 
+  {/* Title (Centered) */}
+  <View>
+  <Text style={styles.title}>Expense Category</Text>
+  {/* <Text style={styles.subTitle}>Expense Category</Text> */}
+  </View>
+
+  {/* Add Icon on Right */}
+  <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addIcon}>
+    <Ionicons name="add" size={20} color={primaryColor} />
+  </TouchableOpacity>
+</View>
+        {/* Search Input Field */}
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search here..."
+          placeholderTextColor="#aaa"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
         {loading ? (
           <ActivityIndicator size="large" color="blue" />
         ) : (
           <FlatList
-            data={categories}
+            data={filteredCategories}
             keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
             renderItem={({ item }) => (
               <Swipeable renderRightActions={() => renderRightActions(item)}>
@@ -109,10 +131,14 @@ const ExpenseCategoryScreen = () => {
           />
         )}
 
-     {/* Floating Button */}
-      <TouchableOpacity style={styles.floatingButton} onPress={() => setModalVisible(true)}>
-        <Ionicons name="add" size={30} color={buttonColor} />
-      </TouchableOpacity> 
+{/* Floating Button */}
+{/* <TouchableOpacity style={styles.floatingButton} onPress={() => setModalVisible(true)}>
+  <View style={styles.floatingButtonContent}>
+    <Ionicons name="add" size={30} color={buttonColor} />
+    <Text style={[styles.floatingButtonText, { color: buttonColor }]}>Add</Text>
+  </View>
+</TouchableOpacity> */}
+
 
         {/* Add/Edit Category Modal */}
         <Modal visible={modalVisible} animationType="slide" transparent>
@@ -155,14 +181,28 @@ export default ExpenseCategoryScreen;
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: designBackgoundColor, padding: 10 },
   titleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between", // Ensures equal spacing between elements
+   // paddingHorizontal: 10,
     paddingTop: 50,
-    marginBottom: 10,
+    marginBottom: 20,
   },
-  title: { fontSize: 25, fontWeight: 'bold', color: primaryColor },
+  
+  backIcon: {
+    padding: 5,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: primaryColor,
+    textAlign: "center",
+    flex: 1, // Allows title to take available space and center itself
+  },
   subTitle: { fontSize: 15, color: secondaryColor, paddingHorizontal: 2, paddingVertical:5 },
 
   addButton: { padding: 2, borderRadius: 5 },
@@ -188,5 +228,26 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 5,
     elevation: 5,
+  },
+  searchInput: {
+    backgroundColor: "#333",
+    padding: 10,
+    borderRadius: 5,
+    //marginHorizontal: 10,
+    marginBottom: 20,
+    color: "#fff",
+    borderWidth: 1,
+    borderColor: "#555",
+  },
+  floatingButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+  
+  floatingButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginLeft: 5, // Space between icon and text
   },
 });
