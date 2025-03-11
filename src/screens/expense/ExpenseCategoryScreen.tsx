@@ -131,25 +131,30 @@ const ExpenseCategoryScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         {/* Search Input Field */}
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search here..."
-          placeholderTextColor="#aaa"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+        <View style={styles.searchContainer}>
+  <Ionicons name="search" size={20} color="#aaa" style={styles.searchIcon} />
+  <TextInput
+    style={styles.searchInput}
+    placeholder="Search here..."
+    placeholderTextColor="#aaa"
+    value={searchQuery}
+    onChangeText={setSearchQuery}
+  />
+</View>
         {loading ? (
           <ActivityIndicator size="large" color="blue" />
         ) : (
           <FlatList
             data={filteredCategories}
             keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
-
-            renderItem={({ item }) => {
-            
+            renderItem={({ item,index }) => {
+              const isLastItem = index === filteredCategories.length - 1;
               return (
                 <Swipeable ref={(ref) => (swipeableRefs.current[item.id] = ref)}  renderRightActions={() => renderRightActions(item)}>
-                  <View style={styles.categoryItem}>
+                  <View  style={[
+            styles.categoryItem,
+            isLastItem && styles.lastCategoryItem, // Apply border only to last item
+          ]}>
                     <Text style={styles.categoryText}>{item.name}</Text>
                   </View>
                 </Swipeable>
@@ -233,6 +238,9 @@ const styles = StyleSheet.create({
 
   addButton: { padding: 2, borderRadius: 5 },
   categoryItem: { padding: 12, borderRadius: 5, elevation: 2, borderColor: secondaryColor, borderTopWidth: 0.3, justifyContent: 'center' },
+  lastCategoryItem: {
+    borderBottomWidth: 0.3, // ✅ Add bottom border only for last item
+  },
   categoryText: { fontSize: 14, color: primaryColor },
   swipeActions: { flexDirection: 'row', justifyContent: 'flex-end' },
   editButton: { backgroundColor: secondaryColor, padding: 7, justifyContent: 'center', borderRadius: 10, marginHorizontal: 5 },
@@ -255,16 +263,37 @@ const styles = StyleSheet.create({
     padding: 5,
     elevation: 5,
   },
-  searchInput: {
-    backgroundColor: "#333",
-    padding: 10,
+  // searchInput: {
+  //   backgroundColor: "#333",
+  //   padding: 10,
+  //   borderRadius: 5,
+  //   //marginHorizontal: 10,
+  //   marginBottom: 20,
+  //   color: "#fff",
+  //   borderWidth: 1,
+  //   borderColor: "#555",
+  // },
+
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#000",
     borderRadius: 5,
-    //marginHorizontal: 10,
-    marginBottom: 20,
-    color: "#fff",
+    paddingHorizontal: 10,
+    height: 40,
     borderWidth: 1,
-    borderColor: "#555",
+    borderColor: "#001",
+    marginBottom: 15
   },
+  searchIcon: {
+    marginRight: 8, // Space between icon and text input
+  },
+  searchInput: {
+    flex: 1, // Takes the remaining space
+   color: primaryColor
+    
+  },
+
   floatingButtonContent: {
     flexDirection: "row",
     alignItems: "center",
