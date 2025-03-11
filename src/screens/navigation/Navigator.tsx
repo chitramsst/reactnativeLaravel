@@ -33,18 +33,18 @@ const DashboardTabNavigator = () => {
   const [isLogoutVisible, setLogoutVisible] = useState(false);
   const dispatch = useDispatch();
 
-  // Function to handle logout confirmation
-  const handleLogout = () => {
-    Alert.alert(
-      "Confirm Logout",
-      "Are you sure you want to logout?",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Logout", onPress: () => dispatch(logout()), style: "default" },
-      ],
-      { cancelable: true }
-    );
-  };
+  // // Function to handle logout confirmation
+  // const handleLogout = () => {
+  //   Alert.alert(
+  //     "Confirm Logout",
+  //     "Are you sure you want to logout?",
+  //     [
+  //       { text: "Cancel", style: "cancel" },
+  //       { text: "Logout", onPress: () => dispatch(logout()), style: "default" },
+  //     ],
+  //     { cancelable: true }
+  //   );
+  // };
 
   return (
     <>
@@ -92,7 +92,7 @@ const DashboardTabNavigator = () => {
           <Ionicons
             name={iconName}
             size={size/1.5} // ✅ Adjusted for perfect fit
-            color={focused ? "#0000000" : color}
+            color={focused ? "#000" : color}
           /> 
            {focused && (
     <Text
@@ -144,7 +144,7 @@ const DashboardTabNavigator = () => {
       },
     }}
   />
-</Tab.Navigator>;
+</Tab.Navigator>
       {/* Logout Modal */}
       <LogoutModal visible={isLogoutVisible} onClose={() => setLogoutVisible(false)} />
     </>
