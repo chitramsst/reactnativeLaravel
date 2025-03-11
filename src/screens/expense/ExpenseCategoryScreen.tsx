@@ -100,11 +100,11 @@ const ExpenseCategoryScreen = ({ navigation }) => {
         setCategoryName(item.name);
         setModalVisible(true);
       }}>
-        <Ionicons name="pencil" size={25} color='#d5bbfc' />
+        <Ionicons name="pencil" size={20} color='#d5bbfc' />
       </TouchableOpacity>
       <TouchableOpacity style={styles.deleteButton} onPress={() => deleteCategory(item.id)}>
         {/* <Text style={styles.buttonText}>Delete</Text> */}
-        <Ionicons name="close" size={25} color='#ffadae' />
+        <Ionicons name="close" size={20} color='#ffadae' />
       </TouchableOpacity>
     </View>
   );

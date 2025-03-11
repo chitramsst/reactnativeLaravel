@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { logout } from "../../../redux/actions/authActions";
+import Toast from "react-native-toast-message";
 
 const LogoutModal = ({ visible, onClose }) => {
   const dispatch = useDispatch();
@@ -22,6 +23,11 @@ const LogoutModal = ({ visible, onClose }) => {
               style={styles.logoutButton}
               onPress={() => {
                 dispatch(logout());
+                Toast.show({
+                  type: "success",
+                  text1: "Logged Out",
+                  text2: "You have successfully logged out!",
+                });
                 onClose();
               }}
             >

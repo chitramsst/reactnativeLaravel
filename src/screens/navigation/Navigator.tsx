@@ -8,6 +8,7 @@ import { logout } from '../../redux/actions/authActions';
 import { Alert, View, Animated, Text } from "react-native";
 import LogoutModal from "../components/Modals/LogoutModal";
 import {designBottomBarColor, primaryColor, secondaryColor} from '../../utils/globalStyle'
+import Toast from "react-native-toast-message";
 
 // Screens
 import LoginScreen from "../LoginScreen";
@@ -64,7 +65,7 @@ const DashboardTabNavigator = () => {
       const animatedScale = new Animated.Value(focused ? 1.2 : 1);
 
       Animated.spring(animatedScale, {
-        toValue: focused ? 1.4 : 1,
+        toValue: focused ? 1.3 : 1,
         friction: 5,
         useNativeDriver: true,
       }).start();
@@ -75,7 +76,7 @@ const DashboardTabNavigator = () => {
           transform: [{ scale: animatedScale }], // ✅ Floating effect on select
           backgroundColor: focused ? "#ffadae" : "transparent", // ✅ Active tab color
           width: focused ? size * 3.5 : size * 2, // ✅ Wider when active
-          height: 37, // ✅ Same as tab bar height
+          height: 27, // ✅ Same as tab bar height
           alignItems: "center",
           justifyContent: "center",
           bottom: 0, // ✅ Align with tab bar bottom
@@ -83,7 +84,7 @@ const DashboardTabNavigator = () => {
           shadowOffset: { width: 0, height: 6 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
-          paddingHorizontal: focused ? 30 : 10, // ✅ Extra 20px padding when active
+          paddingHorizontal: focused ? 10 : 10, // ✅ Extra 20px padding when active
           paddingVertical: 1,
           flexDirection: focused ? "row" : "column", 
           borderRadius: 15,
@@ -98,12 +99,12 @@ const DashboardTabNavigator = () => {
     <Text
       style={{
         color: "#221e23",
-        fontSize: size / 2.8,
-        marginLeft: 8, // ✅ Space between icon and text
+        fontSize: 7,
+        marginLeft: 3, // ✅ Space between icon and text
         fontWeight: "bold",
       }}
     >
-      test
+      {route.name}
     </Text>
   )}
         </Animated.View>
@@ -164,6 +165,9 @@ const AppNavigator = () => {
           <Stack.Screen name="Login" component={LoginScreen} />
         </Stack.Navigator>
       )}
+      <Toast         position='bottom'
+                  bottomOffset={10} 
+                  />
     </NavigationContainer>
   );
 };

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/actions/authActions';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { designBackgoundColor, primaryColor, secondaryColor, buttonColor, buttonTextColor } from '../utils/globalStyle'; 
+import Toast from 'react-native-toast-message';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -19,7 +20,12 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Email and Password are required');
+      //Alert.alert('Error', 'Email and Password are required');
+      Toast.show({
+        type: 'error',
+        text1: 'Login Failed',
+        text2: 'Email and Password is required.'
+      });
       return;
     }
     dispatch(login(email, password));

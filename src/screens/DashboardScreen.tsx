@@ -171,8 +171,8 @@ const styles = StyleSheet.create({
   },
 
   // Card Titles & Values
-  cardTitle: { fontSize: 10, fontWeight: 'bold', marginTop: 5, color: buttonTextSecondaryColor },
-  cardValue: { fontSize: 16, fontWeight: 'bold', color: buttonTextColor, marginTop: 5 },
+  cardTitle: { fontSize: 10, fontWeight: 'bold', marginTop: 10, color: buttonTextSecondaryColor },
+  cardValue: { fontSize: 20, fontWeight: 'bold', marginTop: 10, color: buttonTextColor},
   
 // Cards Section
 navigationContainer: { 
@@ -207,7 +207,7 @@ navButton: {
 
 // Navigation Button Text (Below the Card)
 navButtonText: {
-  marginTop: 8,  // Space between button and text
+  marginTop: 3,  // Space between button and text
   fontSize: 12,  
   fontWeight: 'semibold',
   textAlign: 'center',
