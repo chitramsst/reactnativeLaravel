@@ -53,7 +53,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
       setModalVisible(false);
       setCategoryName("");
       setEditCategory(null);
-     
+
     } catch (error) {
       console.error("Error saving category:", error.response?.data || error.message);
     }
@@ -132,30 +132,40 @@ const ExpenseCategoryScreen = ({ navigation }) => {
         </View>
         {/* Search Input Field */}
         <View style={styles.searchContainer}>
-  <Ionicons name="search" size={20} color="#aaa" style={styles.searchIcon} />
-  <TextInput
-    style={styles.searchInput}
-    placeholder="Search here..."
-    placeholderTextColor="#aaa"
-    value={searchQuery}
-    onChangeText={setSearchQuery}
-  />
-</View>
+          <Ionicons name="search" size={18} color={secondaryColor} style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search here..."
+            placeholderTextColor={secondaryColor}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
         {loading ? (
           <ActivityIndicator size="large" color="blue" />
         ) : (
           <FlatList
             data={filteredCategories}
             keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
-            renderItem={({ item,index }) => {
+            renderItem={({ item, index }) => {
               const isLastItem = index === filteredCategories.length - 1;
+
               return (
-                <Swipeable ref={(ref) => (swipeableRefs.current[item.id] = ref)}  renderRightActions={() => renderRightActions(item)}>
-                  <View  style={[
-            styles.categoryItem,
-            isLastItem && styles.lastCategoryItem, // Apply border only to last item
-          ]}>
+                <Swipeable
+                  ref={(ref) => (swipeableRefs.current[item.id] = ref)}
+                  renderRightActions={() => renderRightActions(item)}
+                >
+                  <View
+                    style={[
+                      styles.categoryItem,
+                      isLastItem && styles.lastCategoryItem,
+                    ]}
+                  >
                     <Text style={styles.categoryText}>{item.name}</Text>
+                    {/* ✅ Right Arrow Icon */}
+                    <View>
+                      <Ionicons name="chevron-forward" size={18} color={secondaryColor} style={styles.rightIcon} />
+                    </View>
                   </View>
                 </Swipeable>
               );
@@ -237,9 +247,16 @@ const styles = StyleSheet.create({
   subTitle: { fontSize: 15, color: secondaryColor, paddingHorizontal: 2, paddingVertical: 5 },
 
   addButton: { padding: 2, borderRadius: 5 },
-  categoryItem: { padding: 12, borderRadius: 5, elevation: 2, borderColor: secondaryColor, borderTopWidth: 0.3, justifyContent: 'center' },
+  categoryItem: {
+    padding: 12, borderRadius: 5, elevation: 2, borderColor: secondaryColor, borderTopWidth: 0.3, justifyContent: "space-between", // ✅ Push text & icon apart
+    flexDirection: "row", // ✅ Align text & icon horizontally
+    alignItems: "center",
+  },
   lastCategoryItem: {
     borderBottomWidth: 0.3, // ✅ Add bottom border only for last item
+  },
+  rightIcon: {
+    marginLeft: 10, // ✅ Space between text & icon
   },
   categoryText: { fontSize: 14, color: primaryColor },
   swipeActions: { flexDirection: 'row', justifyContent: 'flex-end' },
@@ -263,17 +280,6 @@ const styles = StyleSheet.create({
     padding: 5,
     elevation: 5,
   },
-  // searchInput: {
-  //   backgroundColor: "#333",
-  //   padding: 10,
-  //   borderRadius: 5,
-  //   //marginHorizontal: 10,
-  //   marginBottom: 20,
-  //   color: "#fff",
-  //   borderWidth: 1,
-  //   borderColor: "#555",
-  // },
-
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -290,8 +296,8 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1, // Takes the remaining space
-   color: primaryColor
-    
+    color: primaryColor
+
   },
 
   floatingButtonContent: {
