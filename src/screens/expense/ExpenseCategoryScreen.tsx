@@ -100,11 +100,11 @@ const ExpenseCategoryScreen = ({ navigation }) => {
         setCategoryName(item.name);
         setModalVisible(true);
       }}>
-        <Ionicons name="pencil" size={20} color='#d5bbfc' />
+        <Ionicons name="pencil" size={20} color='#000' />
       </TouchableOpacity>
       <TouchableOpacity style={styles.deleteButton} onPress={() => deleteCategory(item.id)}>
         {/* <Text style={styles.buttonText}>Delete</Text> */}
-        <Ionicons name="close" size={20} color='#ffadae' />
+        <Ionicons name="close" size={20} color='#000' />
       </TouchableOpacity>
     </View>
   );
@@ -154,6 +154,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
                 <Swipeable
                   ref={(ref) => (swipeableRefs.current[item.id] = ref)}
                   renderRightActions={() => renderRightActions(item)}
+                  overshootRight={false}
                 >
                   <View
                     style={[
@@ -161,14 +162,16 @@ const ExpenseCategoryScreen = ({ navigation }) => {
                       isLastItem && styles.lastCategoryItem,
                     ]}
                   >
+                    <View style={[{flex:1, flexDirection: "row", justifyContent:"space-between"}]}>
                     <Text style={styles.categoryText}>{item.name}</Text>
                     {/* ✅ Right Arrow Icon */}
                     <View>
                       <Ionicons name="chevron-forward" size={18} color={secondaryColor} style={styles.rightIcon} />
                     </View>
+                    </View>
                   </View>
                 </Swipeable>
-              );
+              ); 
             }}
           />
         )}
@@ -260,8 +263,33 @@ const styles = StyleSheet.create({
   },
   categoryText: { fontSize: 14, color: primaryColor },
   swipeActions: { flexDirection: 'row', justifyContent: 'flex-end' },
-  editButton: { backgroundColor: secondaryColor, padding: 7, justifyContent: 'center', borderRadius: 10, marginHorizontal: 5 },
-  deleteButton: { backgroundColor: secondaryColor, padding: 7, justifyContent: 'center', borderRadius: 10 },
+  //editButton: { backgroundColor: secondaryColor, padding: 7, justifyContent: 'center', borderRadius: 10, marginHorizontal: 5 },
+
+  swipeContainer: {
+    width: 100,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+
+  editButton: {
+    backgroundColor:buttonColor,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 100,
+    height: "100%",
+    padding: 10
+  },
+
+  //deleteButton: { backgroundColor: secondaryColor, padding: 7, justifyContent: 'center', borderRadius: 10 },
+  deleteButton: {
+    backgroundColor: "#ffadae",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 100,
+    height: "100%",
+    padding: 10
+  },
+
   modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.8)" },
   modalContent: { backgroundColor: "#1e1e1e", padding: 20, borderRadius: 10, width: "80%" },
   modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#fff" },
