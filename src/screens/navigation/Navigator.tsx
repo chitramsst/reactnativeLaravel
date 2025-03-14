@@ -16,6 +16,7 @@ import DashboardScreen from "../DashboardScreen";
 import HomeScreen from "../HomeScreen";
 import ExpenseScreen from "../expense/ExpenseScreen";
 import ExpenseCategoryScreen from "../expense/ExpenseCategoryScreen";
+import ReminderScreen from "../reminder/ReminderScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -26,6 +27,7 @@ const DashboardStackNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="DashboardMain" component={DashboardScreen} />
       <Stack.Screen name="ExpenseCategory" component={ExpenseCategoryScreen} />
+      <Stack.Screen name="Reminder" component={ReminderScreen} />
     </Stack.Navigator>
   );
 };

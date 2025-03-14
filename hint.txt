@@ -135,3 +135,10 @@ pod install --repo-update
 cd .. 
 npx react-native run-ios
 ]
+
+
+
+
+cd ios
+rm -rf Pods Podfile.lock
+pod install --verbose 

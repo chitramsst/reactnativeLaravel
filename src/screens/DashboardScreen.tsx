@@ -116,11 +116,11 @@ const DashboardScreen = ({ navigation }) => {
         <View style={styles.navButtonWrapper}>
         <TouchableOpacity 
             style={[styles.navButton]} 
-            onPress={() => navigation.navigate('ExpenseCategory')}
+            onPress={() => navigation.navigate('Reminder')}
         >
             <Ionicons name="alarm" size={24} color={buttonTextColor} />
         </TouchableOpacity>
-        <Text style={[styles.navButtonText]}>Remainder</Text>  
+        <Text style={[styles.navButtonText]}>Reminder</Text>  
     </View>
 
     
