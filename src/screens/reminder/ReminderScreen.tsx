@@ -1,124 +1,143 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Button, StyleSheet, Alert, ToastAndroid, Platform } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Button,
+  FlatList,
+  TextInput,
+  Alert,
+  Modal,
+  StyleSheet,
+} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { requestNotificationPermission, scheduleNotification } from '../../utils/notifications';
-import { useFocusEffect } from '@react-navigation/native';
-import notifee, { TriggerType, TimestampTrigger } from '@notifee/react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import notifee, { TriggerType } from '@notifee/react-native';
 import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../../utils/globalStyle';
 
+
 const ReminderScreen = ({ navigation }) => {
-
-  const [date, setDate] = useState(new Date());
+  const [modalVisible, setModalVisible] = useState(false);
+  const [reminders, setReminders] = useState([]);
+  const [newReminderText, setNewReminderText] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [isPickerVisible, setPickerVisible] = useState(false);
-  const isMounted = useRef(true);
 
-  // Request permissions when screen loads
-  useEffect(() => {
-    requestNotificationPermission();
-  }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      isMounted.current = true;
-      return () => { isMounted.current = false; };
-    }, [])
-  );
-
-  const handleConfirm = (selectedDate) => {
+  const handleConfirm = (date) => {
     setPickerVisible(false);
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
+    setSelectedDate(date);
   };
 
-  const showNotificationMessage = (message) => {
-    if (Platform.OS === 'android') {
-      ToastAndroid.show(message, ToastAndroid.SHORT);
-    } else {
-      Alert.alert('Notification Set!', message);
+  const handleAddReminder = async () => {
+    if (!newReminderText.trim()) {
+      Alert.alert('Error', 'Please enter a reminder text');
+      return;
     }
+    const newReminder = { id: Date.now(), text: newReminderText, date: selectedDate, completed: false };
+    setReminders([...reminders, newReminder]);
+    setModalVisible(false);
+    setNewReminderText('');
+    scheduleNotification(newReminder);
   };
 
-
-  const handleScheduleNotification = async () => {
-
+  const scheduleNotification = async (reminder) => {
     try {
       await notifee.requestPermission();
-
-      const trigger: TimestampTrigger = {
-        type: TriggerType.TIMESTAMP,
-        timestamp: new Date().getTime() + 5000, // 5 seconds from now
-      };
-
       await notifee.createTriggerNotification(
         {
-          title: 'Scheduled Reminder',
-          body: 'This is your scheduled notification!',
+          title: 'Reminder',
+          body: reminder.text,
           android: {
             channelId: 'default',
-            pressAction: {
-              id: 'default',
-            },
           },
         },
-        trigger
+        { type: TriggerType.TIMESTAMP, timestamp: reminder.date.getTime() }
       );
-
     } catch (error) {
-      console.error('Error scheduling notification:', error);
+      console.error('Notification error:', error);
     }
+  };
 
+  const handleDeleteReminder = (id) => {
+    Alert.alert('Delete Reminder', 'Are you sure?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        onPress: () => setReminders(reminders.filter((reminder) => reminder.id !== id)),
+      },
+    ]);
   };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        {/* Title Section with Add Button */}
+        {/* Header */}
         <View style={styles.titleContainer}>
-          {/* Back Arrow Icon */}
-          <TouchableOpacity onPress={() => navigation.navigate("DashboardMain")} style={styles.backIcon}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIcon}>
             <Ionicons name="arrow-back" size={20} color={primaryColor} />
           </TouchableOpacity>
-
-          {/* Title (Centered) */}
-          <View>
-            <Text style={styles.title}>Reminder</Text>
-            {/* <Text style={styles.subTitle}>Expense Category</Text> */}
-          </View>
-
-          {/* Add Icon on Right */}
+          <Text style={styles.title}>Reminders</Text>
           <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addIcon}>
             <Ionicons name="add" size={20} color={primaryColor} />
           </TouchableOpacity>
         </View>
-        {/* Back Button */}
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIcon}>
-          <Ionicons name="arrow-back" size={20} color="black" />
-        </TouchableOpacity>
+        <View style={styles.contentContainer}>
+        {/* Reminder List */}
+        <FlatList
+          data={reminders}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.reminderItem}>
+              <TouchableOpacity onPress={() => handleDeleteReminder(item.id)}>
+                <Ionicons name="checkbox-outline" size={24} color={secondaryColor} />
+              </TouchableOpacity>
+              <Text style={styles.reminderText}>{item.text} - {item.date.toLocaleString()}</Text>
+            </View>
+          )}
+        />
+        </View>
 
-        {/* Button to open Date Picker */}
-        <TouchableOpacity onPress={() => setPickerVisible(true)} style={styles.dateButton}>
-          <Text style={styles.dateText}>{date.toLocaleString()}</Text>
+  {/* Modal for Adding Reminder */}
+<Modal visible={modalVisible} animationType="slide" transparent>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Add Reminder</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Reminder"
+        placeholderTextColor="#aaa"
+        value={newReminderText}
+        onChangeText={setNewReminderText}
+      />
+      <TouchableOpacity onPress={() => setPickerVisible(true)} style={styles.dateButton}>
+        <Text style={styles.dateText}>Pick Date & Time</Text>
+      </TouchableOpacity>
+      <DateTimePickerModal
+        isVisible={isPickerVisible}
+        mode="datetime"
+        onConfirm={handleConfirm}
+        onCancel={() => setPickerVisible(false)}
+      />
+      <View style={styles.modalButtons}>
+        <TouchableOpacity
+          style={[styles.button, styles.cancelButton]}
+          onPress={() => setModalVisible(false)}
+        >
+          <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
-        {setPickerVisible && (
-          <DateTimePickerModal
-            isVisible={isPickerVisible}
-            mode="datetime"
-            onConfirm={handleConfirm}
-            onCancel={() => setPickerVisible(false)}
-          />
-        )}
-        {/* Schedule Notification Button */}
-        <Button title="Set Notification" onPress={handleScheduleNotification} />
+        <TouchableOpacity style={styles.button} onPress={handleAddReminder}>
+          <Text style={styles.buttonText}>Add</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+
       </View>
     </GestureHandlerRootView>
   );
-
 };
-
-export default ReminderScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: designBackgoundColor, padding: 10 },
@@ -128,8 +147,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-between", // Ensures equal spacing between elements
     // paddingHorizontal: 10,
     paddingTop: 50,
-    marginBottom: 20,
+    marginBottom: 40,
   },
+  contentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between", // Ensures equal spacing between elements
+    // paddingHorizontal: 10,
+    marginBottom: 40,
+    backgroundColor: "black",
+    padding: 10,
+
+  },
+  backIcon: {
+    padding: 5,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   title: {
     fontSize: 18,
     fontWeight: "bold",
@@ -140,12 +176,19 @@ const styles = StyleSheet.create({
   subTitle: { fontSize: 15, color: secondaryColor, paddingHorizontal: 2, paddingVertical: 5 },
 
   addButton: { padding: 2, borderRadius: 5 },
-  dateButton: { backgroundColor: '#2196F3', padding: 10, borderRadius: 5 },
-  dateText: { color: 'white' },
-  backIcon: {
-    padding: 5,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  reminderItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  reminderText: { fontSize: 14, marginLeft: 10, flex: 1, color: primaryColor },
+  dateButton: { backgroundColor: '#2196F3', padding: 10, borderRadius: 5, marginBottom: 10 },
+  dateText: { color: 'white', textAlign: 'center' },
+
+    modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.8)" },
+    modalContent: { backgroundColor: "#1e1e1e", padding: 20, borderRadius: 10, width: "80%" },
+    modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#fff" },
+    input: { borderWidth: 1, borderColor: "#444", padding: 10, borderRadius: 5, marginBottom: 10, color: "#fff" },
+    modalButtons: { flexDirection: "row", justifyContent: "space-between" },
+    button: { backgroundColor: buttonColor, padding: 10, borderRadius: 5, flex: 1, alignItems: "center", marginHorizontal: 5 },
+    cancelButton: { backgroundColor: "#ffadae" },
+    buttonText: { color: buttonTextColor, fontWeight: "bold" },
 });
+
+export default ReminderScreen;
