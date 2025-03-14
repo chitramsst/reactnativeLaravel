@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Button,
   FlatList,
   TextInput,
   Alert,
@@ -14,23 +13,22 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import notifee, { TriggerType } from '@notifee/react-native';
-import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../../utils/globalStyle';
-
+import { textColor, buttonColor, buttonTextColor, primaryColor, secondaryColor, designBackgoundColor } from '../../utils/globalStyle';
 
 const ReminderScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [reminders, setReminders] = useState([]);
   const [newReminderText, setNewReminderText] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
   const [isPickerVisible, setPickerVisible] = useState(false);
-  
+  const [currentTime, setCurrentTime] = useState(Date.now());
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setReminders([...reminders]); // Force re-render
+      setCurrentTime(Date.now()); // Update the state every second
     }, 1000);
     return () => clearInterval(interval);
-  }, [reminders]);
+  }, []);
 
   const handleConfirm = (date) => {
     setPickerVisible(false);
@@ -42,8 +40,13 @@ const ReminderScreen = ({ navigation }) => {
       Alert.alert('Error', 'Please enter a reminder text');
       return;
     }
+    if (!selectedDate) {
+      Alert.alert('Error', 'Please select a date and time');
+      return;
+    }
+
     const newReminder = { id: Date.now(), text: newReminderText, date: selectedDate, completed: false };
-    setReminders([...reminders, newReminder]);
+    setReminders((prevReminders) => [...prevReminders, newReminder]);
     setModalVisible(false);
     setNewReminderText('');
     scheduleNotification(newReminder);
@@ -72,7 +75,7 @@ const ReminderScreen = ({ navigation }) => {
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
-        onPress: () => setReminders(reminders.filter((reminder) => reminder.id !== id)),
+        onPress: () => setReminders((prevReminders) => prevReminders.filter((reminder) => reminder.id !== id)),
       },
     ]);
   };
@@ -90,25 +93,31 @@ const ReminderScreen = ({ navigation }) => {
             <Ionicons name="add" size={20} color={primaryColor} />
           </TouchableOpacity>
         </View>
-        <View style={styles.contentContainer}>
-          {/* Reminder List */}
-          <FlatList
-            data={reminders}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
+
+        {/* Reminder List */}
+        <FlatList
+          data={reminders}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => {
+            const reminderTime = new Date(item.date);
+            const isChecked = reminderTime.getTime() <= currentTime;
+
+            return (
               <View style={styles.reminderItem}>
-                <TouchableOpacity onPress={() => handleDeleteReminder(item.id)}>
+                <TouchableOpacity onPress={() => isChecked && handleDeleteReminder(item.id)}>
                   <Ionicons
-                     name={new Date(item.time).getTime() <= new Date().getTime() ? "checkbox-outline" : "square-outline"}
+                    name={isChecked ? "checkbox-outline" : "square-outline"}
                     size={24}
                     color={secondaryColor}
                   />
                 </TouchableOpacity>
-                <Text style={styles.reminderText}>{item.text} - {item.date.toLocaleString()}</Text>
+                <Text style={styles.reminderText}>
+                  {item.text} - {reminderTime.toLocaleString()}
+                </Text>
               </View>
-            )}
-          />
-        </View>
+            );
+          }}
+        />
 
         {/* Modal for Adding Reminder */}
         <Modal visible={modalVisible} animationType="slide" transparent>
@@ -123,7 +132,9 @@ const ReminderScreen = ({ navigation }) => {
                 onChangeText={setNewReminderText}
               />
               <TouchableOpacity onPress={() => setPickerVisible(true)} style={styles.dateButton}>
-                <Text style={styles.dateText}>Pick Date & Time</Text>
+                <Text style={styles.dateText}>
+                  {selectedDate ? selectedDate.toLocaleString() : "Pick Date & Time"}
+                </Text>
               </TouchableOpacity>
               <DateTimePickerModal
                 isVisible={isPickerVisible}
@@ -145,7 +156,6 @@ const ReminderScreen = ({ navigation }) => {
             </View>
           </View>
         </Modal>
-
       </View>
     </GestureHandlerRootView>
   );
