@@ -9,11 +9,19 @@ import {
   Modal,
   StyleSheet,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import notifee, { TriggerType } from '@notifee/react-native';
-import { textColor, buttonColor, buttonTextColor, primaryColor, secondaryColor, designBackgoundColor } from '../../utils/globalStyle';
+import {
+  textColor,
+  buttonColor,
+  buttonTextColor,
+  primaryColor,
+  secondaryColor,
+  designBackgoundColor,
+} from '../../utils/globalStyle';
 
 const ReminderScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,11 +32,31 @@ const ReminderScreen = ({ navigation }) => {
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   useEffect(() => {
+    loadReminders();
     const interval = setInterval(() => {
-      setCurrentTime(Date.now()); // Update the state every second
+      setCurrentTime(Date.now());
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const saveReminders = async (reminders) => {
+    try {
+      await AsyncStorage.setItem('reminders', JSON.stringify(reminders));
+    } catch (error) {
+      console.error('Error saving reminders:', error);
+    }
+  };
+
+  const loadReminders = async () => {
+    try {
+      const storedReminders = await AsyncStorage.getItem('reminders');
+      if (storedReminders) {
+        setReminders(JSON.parse(storedReminders));
+      }
+    } catch (error) {
+      console.error('Error loading reminders:', error);
+    }
+  };
 
   const handleConfirm = (date) => {
     setPickerVisible(false);
@@ -44,9 +72,11 @@ const ReminderScreen = ({ navigation }) => {
       Alert.alert('Error', 'Please select a date and time');
       return;
     }
-
+    
     const newReminder = { id: Date.now(), text: newReminderText, date: selectedDate, completed: false };
-    setReminders((prevReminders) => [...prevReminders, newReminder]);
+    const updatedReminders = [...reminders, newReminder];
+    setReminders(updatedReminders);
+    saveReminders(updatedReminders);
     setModalVisible(false);
     setNewReminderText('');
     scheduleNotification(newReminder);
@@ -63,7 +93,7 @@ const ReminderScreen = ({ navigation }) => {
             channelId: 'default',
           },
         },
-        { type: TriggerType.TIMESTAMP, timestamp: reminder.date.getTime() }
+        { type: TriggerType.TIMESTAMP, timestamp: new Date(reminder.date).getTime() }
       );
     } catch (error) {
       console.error('Notification error:', error);
@@ -75,7 +105,11 @@ const ReminderScreen = ({ navigation }) => {
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
-        onPress: () => setReminders((prevReminders) => prevReminders.filter((reminder) => reminder.id !== id)),
+        onPress: () => {
+          const updatedReminders = reminders.filter((reminder) => reminder.id !== id);
+          setReminders(updatedReminders);
+          saveReminders(updatedReminders);
+        },
       },
     ]);
   };
@@ -83,7 +117,6 @@ const ReminderScreen = ({ navigation }) => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        {/* Header */}
         <View style={styles.titleContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIcon}>
             <Ionicons name="arrow-back" size={20} color={primaryColor} />
@@ -94,7 +127,6 @@ const ReminderScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Reminder List */}
         <FlatList
           data={reminders}
           keyExtractor={(item) => item.id.toString()}
@@ -119,7 +151,6 @@ const ReminderScreen = ({ navigation }) => {
           }}
         />
 
-        {/* Modal for Adding Reminder */}
         <Modal visible={modalVisible} animationType="slide" transparent>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -132,21 +163,11 @@ const ReminderScreen = ({ navigation }) => {
                 onChangeText={setNewReminderText}
               />
               <TouchableOpacity onPress={() => setPickerVisible(true)} style={styles.dateButton}>
-                <Text style={styles.dateText}>
-                  {selectedDate ? selectedDate.toLocaleString() : "Pick Date & Time"}
-                </Text>
+                <Text style={styles.dateText}>{selectedDate ? selectedDate.toLocaleString() : 'Pick Date & Time'}</Text>
               </TouchableOpacity>
-              <DateTimePickerModal
-                isVisible={isPickerVisible}
-                mode="datetime"
-                onConfirm={handleConfirm}
-                onCancel={() => setPickerVisible(false)}
-              />
+              <DateTimePickerModal isVisible={isPickerVisible} mode="datetime" onConfirm={handleConfirm} onCancel={() => setPickerVisible(false)} />
               <View style={styles.modalButtons}>
-                <TouchableOpacity
-                  style={[styles.button, styles.cancelButton]}
-                  onPress={() => setModalVisible(false)}
-                >
+                <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setModalVisible(false)}>
                   <Text style={styles.buttonText}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={handleAddReminder}>
@@ -160,6 +181,7 @@ const ReminderScreen = ({ navigation }) => {
     </GestureHandlerRootView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: designBackgoundColor, padding: 10 },

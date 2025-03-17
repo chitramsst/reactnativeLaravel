@@ -127,12 +127,9 @@ npm i --save-dev @types/react-native-vector-icons
 Manually Copy the Font File
 
 Locate Ionicons.ttf in:
-arduino
-Copy
-Edit
+
 node_modules/react-native-vector-icons/Fonts/Ionicons.ttf
 Copy Ionicons.ttf to your project’s ios/YourApp directory.
-Add Font to Xcode
 
 Open ios/YourApp.xcworkspace in Xcode.
 In the left panel, right-click YourApp folder > Select "Add Files to YourApp".
@@ -142,21 +139,17 @@ Modify Info.plist
 
 In Xcode, open Info.plist (found in the left sidebar under ios/YourApp).
 Add the following inside <dict>:
-xml
-Copy
-Edit
 <key>UIAppFonts</key>
 <array>
     <string>Ionicons.ttf</string>
 </array>
+
 Save the changes.
 Rebuild the iOS Project
-Run:
 
-sh
-Copy
-Edit
+Run:
 cd ios && pod install && cd ..
+
 npx react-native run-ios
 
 
