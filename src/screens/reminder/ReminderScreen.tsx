@@ -8,6 +8,7 @@ import {
   Alert,
   Modal,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -22,21 +23,18 @@ import {
   secondaryColor,
   designBackgoundColor,
 } from '../../utils/globalStyle';
-import { Platform } from 'react-native';
 
 const ReminderScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [reminders, setReminders] = useState([]);
   const [newReminderText, setNewReminderText] = useState('');
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   useEffect(() => {
     loadReminders();
-    const interval = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 1000);
+    const interval = setInterval(() => setCurrentTime(Date.now()), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -59,18 +57,32 @@ const ReminderScreen = ({ navigation }) => {
     }
   };
 
-  const handleConfirm = (date) => {
+  const handleConfirm = (date: Date) => {
+    Alert.alert("Selected Date", date.toLocaleString());
+
+    if (date instanceof Date && !isNaN(date.getTime())) {
+      setSelectedDate(date); // Ensure it's a valid Date object
+    } else {
+      console.error("Invalid Date Selected");
+    }
     setPickerVisible(false);
-    setSelectedDate(date);
   };
+
 
   const handleAddReminder = async () => {
     if (!newReminderText.trim()) {
       Alert.alert('Error', 'Please enter a reminder text');
       return;
     }
+
     if (!selectedDate) {
       Alert.alert('Error', 'Please select a date and time');
+      return;
+    }
+
+    const currentDateTime = new Date();
+    if (selectedDate.getTime() <= currentDateTime.getTime()) {
+      Alert.alert('Error', 'Please select a future date and time');
       return;
     }
 
@@ -81,6 +93,7 @@ const ReminderScreen = ({ navigation }) => {
     setModalVisible(false);
     setNewReminderText('');
     scheduleNotification(newReminder);
+    setSelectedDate(null); // Reset selected date after adding
   };
 
   const scheduleNotification = async (reminder) => {
@@ -90,9 +103,7 @@ const ReminderScreen = ({ navigation }) => {
         {
           title: 'Reminder',
           body: reminder.text,
-          android: {
-            channelId: 'default',
-          },
+          android: { channelId: 'default' },
         },
         { type: TriggerType.TIMESTAMP, timestamp: new Date(reminder.date).getTime() }
       );
@@ -121,11 +132,14 @@ const ReminderScreen = ({ navigation }) => {
 
         <View style={styles.titleContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIcon}>
-            <Ionicons name="arrow-back" size={20} color={primaryColor} />
+            <Ionicons name="arrow-back" size={24} color={primaryColor} />
           </TouchableOpacity>
           <Text style={styles.title}>Reminders</Text>
-          <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addIcon}>
-            <Ionicons name="add" size={20} color={primaryColor} />
+          <TouchableOpacity onPress={() => {
+            setSelectedDate(null); setNewReminderText(''); // Ensure selectedDate is not null
+            setModalVisible(true);
+          }} style={styles.addIcon}>
+            <Ionicons name="add" size={24} color={primaryColor} />
           </TouchableOpacity>
         </View>
 
@@ -134,18 +148,14 @@ const ReminderScreen = ({ navigation }) => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
             const reminderTime = new Date(item.date);
-            const isChecked = reminderTime.getTime() <= currentTime;
+            const isChecked = !isNaN(reminderTime.getTime()) && reminderTime.getTime() <= currentTime;
 
             return (
               <View style={styles.reminderItem}>
-                  <Ionicons
-                    name="alarm"
-                    size={24}
-                    color={secondaryColor}
-                  />
-                  <Text style={styles.reminderText}>
-                    {item.text} - {reminderTime.toLocaleString()}
-                  </Text>
+                <Ionicons name="alarm" size={24} color={secondaryColor} />
+                <Text style={styles.reminderText}>
+                  {item.text} - {reminderTime.toLocaleString()}
+                </Text>
                 <TouchableOpacity onPress={() => isChecked && handleDeleteReminder(item.id)}>
                   <Ionicons
                     name={isChecked ? "checkbox-outline" : "square-outline"}
@@ -155,48 +165,40 @@ const ReminderScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             );
-
-            // return (
-            //   <View style={styles.reminderItem}>
-            //     <Ionicons name="alarm" size={24} color={secondaryColor} />
-            //     <Text style={styles.reminderText}>
-            //       {item.text} - {new Date(item.reminderTime).toLocaleString()}
-            //     </Text>
-            
-            //     <TouchableOpacity onPress={() => handleToggleCheck(item.id)}>
-            //       <Ionicons
-            //         name={isChecked ? "checkbox-outline" : "square-outline"}
-            //         size={24}
-            //         color={secondaryColor}
-            //       />
-            //     </TouchableOpacity>
-            
-            //     {isChecked && (
-            //       <TouchableOpacity onPress={() => handleDeleteReminder(item.id)}>
-            //         <Ionicons name="trash" size={24} color="red" />
-            //       </TouchableOpacity>
-            //     )}
-            //   </View>
-            // );
-
           }}
         />
 
         <Modal visible={modalVisible} animationType="slide" transparent>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Add Reminder</Text>
+              <Text style={[styles.modalTitle, { paddingBottom: 10, color: primaryColor }]}>Reminder Info</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Enter Reminder"
-                placeholderTextColor="#aaa"
+                placeholderTextColor={secondaryColor}
                 value={newReminderText}
                 onChangeText={setNewReminderText}
               />
-              <TouchableOpacity onPress={() => setPickerVisible(true)} style={styles.dateButton}>
-                <Text style={styles.dateText}>{selectedDate ? selectedDate.toLocaleString() : 'Pick Date & Time'}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  console.log("Picker Opened");
+                  setPickerVisible(true);
+                }}
+                style={styles.dateButton}
+              >
+                <Text style={styles.dateText}>
+                  {selectedDate ? selectedDate.toLocaleString() : 'Pick Date & Time'}
+                </Text>
               </TouchableOpacity>
-              <DateTimePickerModal isVisible={isPickerVisible} mode="datetime" onConfirm={handleConfirm} onCancel={() => setPickerVisible(false)} display={Platform.OS === "ios" ? "inline" : "spinner"} />
+
+              <DateTimePickerModal
+                isVisible={isPickerVisible}
+                mode="datetime"
+                date={selectedDate || new Date()}
+                onConfirm={handleConfirm}
+                onCancel={() => setPickerVisible(false)}
+                display={Platform.OS === "ios" ? "inline" : "default"}
+              />
               <View style={styles.modalButtons}>
                 <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setModalVisible(false)}>
                   <Text style={styles.buttonText}>Cancel</Text>
@@ -214,52 +216,17 @@ const ReminderScreen = ({ navigation }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: designBackgoundColor, padding: 10 },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between", // Ensures equal spacing between elements
-    // paddingHorizontal: 10,
-    paddingTop: 50,
-    marginBottom: 40,
-  },
-  contentContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between", // Ensures equal spacing between elements
-    // paddingHorizontal: 10,
-    marginBottom: 40,
-    backgroundColor: "black",
-    padding: 10,
-
-  },
-  backIcon: {
-    padding: 5,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: primaryColor,
-    textAlign: "center",
-    flex: 1, // Allows title to take available space and center itself
-  },
-  subTitle: { fontSize: 15, color: secondaryColor, paddingHorizontal: 2, paddingVertical: 5 },
-
-  addButton: { padding: 2, borderRadius: 5 },
+  titleContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 50, marginBottom: 40 },
+  backIcon: { padding: 5, borderRadius: 5 },
+  title: { fontSize: 18, fontWeight: "bold", color: primaryColor, textAlign: "center", flex: 1 },
   reminderItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
   reminderText: { fontSize: 14, marginLeft: 10, flex: 1, color: primaryColor },
   dateButton: { backgroundColor: '#2196F3', padding: 10, borderRadius: 5, marginBottom: 10 },
   dateText: { color: 'white', textAlign: 'center' },
-
   modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.8)" },
   modalContent: { backgroundColor: "#1e1e1e", padding: 20, borderRadius: 10, width: "80%" },
-  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10, color: "#fff" },
   input: { borderWidth: 1, borderColor: "#444", padding: 10, borderRadius: 5, marginBottom: 10, color: "#fff" },
   modalButtons: { flexDirection: "row", justifyContent: "space-between" },
   button: { backgroundColor: buttonColor, padding: 10, borderRadius: 5, flex: 1, alignItems: "center", marginHorizontal: 5 },
