@@ -22,6 +22,7 @@ import {
   secondaryColor,
   designBackgoundColor,
 } from '../../utils/globalStyle';
+import { Platform } from 'react-native';
 
 const ReminderScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -72,7 +73,7 @@ const ReminderScreen = ({ navigation }) => {
       Alert.alert('Error', 'Please select a date and time');
       return;
     }
-    
+
     const newReminder = { id: Date.now(), text: newReminderText, date: selectedDate, completed: false };
     const updatedReminders = [...reminders, newReminder];
     setReminders(updatedReminders);
@@ -117,6 +118,7 @@ const ReminderScreen = ({ navigation }) => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
+
         <View style={styles.titleContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIcon}>
             <Ionicons name="arrow-back" size={20} color={primaryColor} />
@@ -136,6 +138,14 @@ const ReminderScreen = ({ navigation }) => {
 
             return (
               <View style={styles.reminderItem}>
+                  <Ionicons
+                    name="alarm"
+                    size={24}
+                    color={secondaryColor}
+                  />
+                  <Text style={styles.reminderText}>
+                    {item.text} - {reminderTime.toLocaleString()}
+                  </Text>
                 <TouchableOpacity onPress={() => isChecked && handleDeleteReminder(item.id)}>
                   <Ionicons
                     name={isChecked ? "checkbox-outline" : "square-outline"}
@@ -143,11 +153,32 @@ const ReminderScreen = ({ navigation }) => {
                     color={secondaryColor}
                   />
                 </TouchableOpacity>
-                <Text style={styles.reminderText}>
-                  {item.text} - {reminderTime.toLocaleString()}
-                </Text>
               </View>
             );
+
+            // return (
+            //   <View style={styles.reminderItem}>
+            //     <Ionicons name="alarm" size={24} color={secondaryColor} />
+            //     <Text style={styles.reminderText}>
+            //       {item.text} - {new Date(item.reminderTime).toLocaleString()}
+            //     </Text>
+            
+            //     <TouchableOpacity onPress={() => handleToggleCheck(item.id)}>
+            //       <Ionicons
+            //         name={isChecked ? "checkbox-outline" : "square-outline"}
+            //         size={24}
+            //         color={secondaryColor}
+            //       />
+            //     </TouchableOpacity>
+            
+            //     {isChecked && (
+            //       <TouchableOpacity onPress={() => handleDeleteReminder(item.id)}>
+            //         <Ionicons name="trash" size={24} color="red" />
+            //       </TouchableOpacity>
+            //     )}
+            //   </View>
+            // );
+
           }}
         />
 
@@ -165,7 +196,7 @@ const ReminderScreen = ({ navigation }) => {
               <TouchableOpacity onPress={() => setPickerVisible(true)} style={styles.dateButton}>
                 <Text style={styles.dateText}>{selectedDate ? selectedDate.toLocaleString() : 'Pick Date & Time'}</Text>
               </TouchableOpacity>
-              <DateTimePickerModal isVisible={isPickerVisible} mode="datetime" onConfirm={handleConfirm} onCancel={() => setPickerVisible(false)} />
+              <DateTimePickerModal isVisible={isPickerVisible} mode="datetime" onConfirm={handleConfirm} onCancel={() => setPickerVisible(false)} display={Platform.OS === "ios" ? "inline" : "spinner"} />
               <View style={styles.modalButtons}>
                 <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setModalVisible(false)}>
                   <Text style={styles.buttonText}>Cancel</Text>
@@ -177,6 +208,7 @@ const ReminderScreen = ({ navigation }) => {
             </View>
           </View>
         </Modal>
+
       </View>
     </GestureHandlerRootView>
   );
