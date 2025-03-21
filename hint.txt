@@ -212,3 +212,16 @@ Then, build your project (Cmd + B).
 
 lsof -i :8081
 kill -9 <PID>
+
+
+
+Node path missing issue (while changed node versions)
+
+sudo mkdir -p /opt/homebrew/Cellar/node/23.3.0/bin/
+sudo ln -s $(which node) /opt/homebrew/Cellar/node/23.3.0/bin/node
+
+clean and rebuild object
+rm -rf node_modules ios/Pods ios/build
+yarn install  # or npm install
+cd ios && pod install --verbose && cd ..
+npx react-native run-ios

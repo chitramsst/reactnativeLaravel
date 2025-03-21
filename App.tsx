@@ -4,6 +4,7 @@ import { store, persistor } from "./src/redux/store.js"; // ✅ Make sure both a
 import AppNavigator from "./src/screens/navigation/Navigator";
 import { PersistGate } from "redux-persist/integration/react";
 
+
 const App = () => {
   return (
     <Provider store={store}>

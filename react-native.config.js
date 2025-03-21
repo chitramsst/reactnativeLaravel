@@ -1,3 +1,3 @@
 module.exports = {
-    assets: ['./assets/fonts/'], // Linking custom fonts
+    assets: ['./node_modules/react-native-vector-icons/Fonts'], // Linking custom fonts
   };

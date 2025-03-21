@@ -11,10 +11,10 @@ import {
   Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import notifee, { TriggerType } from '@notifee/react-native';
+import { Button } from "react-native-paper";
 import {
   textColor,
   buttonColor,
@@ -23,6 +23,9 @@ import {
   secondaryColor,
   designBackgoundColor,
 } from '../../utils/globalStyle';
+import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
+import { enGB, registerTranslation } from 'react-native-paper-dates'
+registerTranslation('en-GB', enGB)
 
 const ReminderScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -31,6 +34,9 @@ const ReminderScreen = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [currentTime, setCurrentTime] = useState(Date.now());
+  const [time, setTime] = useState<{ hours: number; minutes: number } | null>(null);
+  const [timeVisible, setTimeVisible] = useState(false);
+
 
   useEffect(() => {
     loadReminders();
@@ -46,6 +52,18 @@ const ReminderScreen = ({ navigation }) => {
     }
   };
 
+  const onDateConfirm = (params: { date: Date }) => {
+    setSelectedDate(params.date);
+    setPickerVisible(false);
+  };
+
+  // Handle Time Selection
+  const onTimeConfirm = ({ hours, minutes }: { hours: number; minutes: number }) => {
+    setTime({ hours, minutes });
+    setTimeVisible(false);
+  };
+
+
   const loadReminders = async () => {
     try {
       const storedReminders = await AsyncStorage.getItem('reminders');
@@ -57,16 +75,18 @@ const ReminderScreen = ({ navigation }) => {
     }
   };
 
-  const handleConfirm = (date: Date) => {
-    Alert.alert("Selected Date", date.toLocaleString());
-
-    if (date instanceof Date && !isNaN(date.getTime())) {
-      setSelectedDate(date); // Ensure it's a valid Date object
-    } else {
-      console.error("Invalid Date Selected");
-    }
-    setPickerVisible(false);
-  };
+  const onConfirmSingle = React.useCallback(
+    (params) => {
+      setPickerVisible(false);
+      if (params.date instanceof Date && !isNaN(params.date.getTime())) {
+        setSelectedDate(params.date); // Ensure it's a valid Date object
+        setTimeVisible(true);
+      } else {
+        console.error("Invalid Date Selected");
+      }
+    },
+    [setPickerVisible, setSelectedDate]
+  );
 
 
   const handleAddReminder = async () => {
@@ -75,25 +95,36 @@ const ReminderScreen = ({ navigation }) => {
       return;
     }
 
-    if (!selectedDate) {
+    if (!selectedDate || !time) {
       Alert.alert('Error', 'Please select a date and time');
       return;
     }
 
-    const currentDateTime = new Date();
-    if (selectedDate.getTime() <= currentDateTime.getTime()) {
-      Alert.alert('Error', 'Please select a future date and time');
+    const reminderDateTime = new Date(selectedDate);
+    reminderDateTime.setHours(time.hours, time.minutes, 0, 0);
+
+    if (reminderDateTime < new Date()) {
+      Alert.alert('Error', 'Reminder time must be in the future');
       return;
     }
 
-    const newReminder = { id: Date.now(), text: newReminderText, date: selectedDate, completed: false };
+    const newReminder = {
+      id: Date.now(),
+      text: newReminderText,
+      date: reminderDateTime.toISOString(),
+      completed: false,
+    };
+
     const updatedReminders = [...reminders, newReminder];
     setReminders(updatedReminders);
     saveReminders(updatedReminders);
+
     setModalVisible(false);
     setNewReminderText('');
+    setSelectedDate(null);
+    setTime(null);
+
     scheduleNotification(newReminder);
-    setSelectedDate(null); // Reset selected date after adding
   };
 
   const scheduleNotification = async (reminder) => {
@@ -136,7 +167,7 @@ const ReminderScreen = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={styles.title}>Reminders</Text>
           <TouchableOpacity onPress={() => {
-            setSelectedDate(null); setNewReminderText(''); // Ensure selectedDate is not null
+            setSelectedDate(null); setNewReminderText(''); 
             setModalVisible(true);
           }} style={styles.addIcon}>
             <Ionicons name="add" size={24} color={primaryColor} />
@@ -187,18 +218,32 @@ const ReminderScreen = ({ navigation }) => {
                 style={styles.dateButton}
               >
                 <Text style={styles.dateText}>
-                  {selectedDate ? selectedDate.toLocaleString() : 'Pick Date & Time'}
+                  {selectedDate ? selectedDate.toDateString() : 'Pick Date & Time'} 
+                  {"  "}
+                  {time ? time.hours + ':' + time.minutes : ''}
                 </Text>
               </TouchableOpacity>
 
-              <DateTimePickerModal
-                isVisible={isPickerVisible}
-                mode="datetime"
-                date={selectedDate || new Date()}
-                onConfirm={handleConfirm}
-                onCancel={() => setPickerVisible(false)}
-                display={Platform.OS === "ios" ? "inline" : "default"}
+              <DatePickerModal
+                locale="en"
+                mode="single"
+                visible={isPickerVisible}
+                onDismiss={() => setPickerVisible(false)}
+                onConfirm={(params) => {
+                  //handleConfirm(params.date);
+                  onConfirmSingle(params)
+                  setPickerVisible(false)
+                }}
               />
+              {/* Open Time Picker (Triggered Automatically) */}
+              <TimePickerModal
+                visible={timeVisible}
+                onDismiss={() => setTimeVisible(false)}
+                onConfirm={onTimeConfirm}
+                hours={time?.hours || 12} // Default to 12:00
+                minutes={time?.minutes || 0}
+              />
+
               <View style={styles.modalButtons}>
                 <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setModalVisible(false)}>
                   <Text style={styles.buttonText}>Cancel</Text>
