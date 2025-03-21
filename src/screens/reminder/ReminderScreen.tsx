@@ -175,29 +175,33 @@ const ReminderScreen = ({ navigation }) => {
         </View>
 
         <FlatList
-          data={reminders}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => {
-            const reminderTime = new Date(item.date);
-            const isChecked = !isNaN(reminderTime.getTime()) && reminderTime.getTime() <= currentTime;
+  data={reminders}
+  keyExtractor={(item) => item.id.toString()}
+  renderItem={({ item }) => {
+    const reminderTime = new Date(item.date);
+    const isChecked = !isNaN(reminderTime.getTime()) && reminderTime.getTime() <= currentTime;
 
-            return (
-              <View style={styles.reminderItem}>
-                <Ionicons name="alarm" size={24} color={secondaryColor} />
-                <Text style={styles.reminderText}>
-                  {item.text} - {reminderTime.toLocaleString()}
-                </Text>
-                <TouchableOpacity onPress={() => isChecked && handleDeleteReminder(item.id)}>
-                  <Ionicons
-                    name={isChecked ? "checkbox-outline" : "square-outline"}
-                    size={24}
-                    color={secondaryColor}
-                  />
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        />
+    return (
+      <View style={styles.card}>
+        <View style={styles.cardContent}>
+          <Ionicons name="alarm" size={24} color="white" style={styles.alarmIcon} />
+          <View style={styles.textContainer}>
+            <Text style={styles.reminderTitle}>{item.text}</Text>
+            <Text style={styles.reminderDate}>{reminderTime.toLocaleString()}</Text>
+          </View>
+          <TouchableOpacity onPress={() => isChecked && handleDeleteReminder(item.id)}>
+            <Ionicons
+              name={isChecked ? "checkbox-outline" : "square-outline"}
+              size={24}
+              color="white"
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }}
+/>
+
 
         <Modal visible={modalVisible} animationType="slide" transparent>
           <View style={styles.modalContainer}>
@@ -262,6 +266,40 @@ const ReminderScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  card: {
+    backgroundColor: "#000000",
+    borderRadius: 10,
+    marginVertical: 8,
+    padding: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  alarmIcon: {
+    padding: 10,
+    backgroundColor: "#ff6b6b",
+    borderRadius: 8,
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 15,
+  },
+  reminderTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  reminderDate: {
+    fontSize: 13,
+    color: "#ccc",
+    marginTop: 5,
+  },
   container: { flex: 1, backgroundColor: designBackgoundColor, padding: 10 },
   titleContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 50, marginBottom: 40 },
   backIcon: { padding: 5, borderRadius: 5 },
