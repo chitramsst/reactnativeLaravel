@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   container: { flex: 1, backgroundColor: designBackgoundColor, padding: 10 },
-  titleContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 50, marginBottom: 40 },
+  titleContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 50, marginBottom: 10 },
   backIcon: { padding: 5, borderRadius: 5 },
   title: { fontSize: 18, fontWeight: "bold", color: primaryColor, textAlign: "center", flex: 1 },
   reminderItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
