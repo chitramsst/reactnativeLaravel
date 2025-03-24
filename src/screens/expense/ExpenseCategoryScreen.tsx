@@ -7,6 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../../utils/globalStyle';
+import Toast from "react-native-toast-message";
 
 const ExpenseCategoryScreen = ({ navigation }) => {
   const [categories, setCategories] = useState([]);
@@ -72,7 +73,18 @@ const ExpenseCategoryScreen = ({ navigation }) => {
           text: "Delete",
           onPress: async () => {
             try {
-              await api.delete(`/expense/expense-categories/delete/${id}`);
+              const response = await api.delete(`/expense/expense-categories/delete/${id}`);
+
+              if (response.data.success === false) {
+                // Show toast message if deletion is restricted
+                Toast.show({
+                  type: "error",
+                  text1: "Delete Restriction.",
+                  text2: "This category has expense data!",
+                });
+                return;
+              }
+
               setCategories(categories.filter(cat => cat.id !== id));
 
               if (swipeableRefs.current[id]) {

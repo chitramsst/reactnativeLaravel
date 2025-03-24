@@ -167,7 +167,7 @@ const AppNavigator = () => {
           <Stack.Screen name="Login" component={LoginScreen} />
         </Stack.Navigator>
       )}
-      <Toast         position='bottom'
+      <Toast         position='top'
                   bottomOffset={10} 
                   />
     </NavigationContainer>
