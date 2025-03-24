@@ -144,36 +144,50 @@ const ExpenseCategoryScreen = ({ navigation }) => {
         {loading ? (
           <ActivityIndicator size="large" color="blue" />
         ) : (
+          
           <FlatList
-            data={filteredCategories}
-            keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
-            renderItem={({ item, index }) => {
-              const isLastItem = index === filteredCategories.length - 1;
-
-              return (
-                <Swipeable
-                  ref={(ref) => (swipeableRefs.current[item.id] = ref)}
-                  renderRightActions={() => renderRightActions(item)}
-                  overshootRight={false}
+          data={filteredCategories}
+          keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
+          renderItem={({ item, index }) => {
+            const isLastItem = index === filteredCategories.length - 1;
+            
+            return (
+              <Swipeable
+                ref={(ref) => (item.id ? (swipeableRefs.current[item.id] = ref) : null)}
+                renderRightActions={() => renderRightActions(item)}
+                overshootRight={false}
+              >
+                <View
+                  style={[
+                    styles.categoryItem,
+                    isLastItem && styles.lastCategoryItem,
+                  ]}
                 >
-                  <View
-                    style={[
-                      styles.categoryItem,
-                      isLastItem && styles.lastCategoryItem,
-                    ]}
-                  >
-                    <View style={[{flex:1, flexDirection: "row", justifyContent:"space-between"}]}>
+                  <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                    {/* ✅ Round Icon with First Letter */}
+                    <View style={styles.iconCircle}>
+                      <Text style={styles.iconText}>
+                        {item.name.charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+        
+                    {/* ✅ Category Name (with spacing) */}
                     <Text style={styles.categoryText}>{item.name}</Text>
+        
                     {/* ✅ Right Arrow Icon */}
-                    <View>
+                    <View style={{ marginLeft: "auto" }}>
                       <Ionicons name="chevron-forward" size={18} color={secondaryColor} style={styles.rightIcon} />
                     </View>
-                    </View>
                   </View>
-                </Swipeable>
-              ); 
-            }}
-          />
+                </View>
+              </Swipeable>
+            );
+          }}
+          showsVerticalScrollIndicator={true} // Show scrollbar
+          scrollIndicatorInsets={{ right: 1 }} // Ensures visibility on some devices
+          contentContainerStyle={styles.scrollContainer} // Custom styling
+        />
+        
         )}
 
         {/* Floating Button */}
@@ -251,9 +265,10 @@ const styles = StyleSheet.create({
 
   addButton: { padding: 2, borderRadius: 5 },
   categoryItem: {
-    padding: 12, borderRadius: 5, elevation: 2, borderColor: secondaryColor, borderTopWidth: 0.3, justifyContent: "space-between", // ✅ Push text & icon apart
+    padding: 12, borderRadius: 5, elevation: 2, borderColor: '#000000', borderTopWidth: 0.9, justifyContent: "space-between", // ✅ Push text & icon apart
     flexDirection: "row", // ✅ Align text & icon horizontally
     alignItems: "center",
+    marginBottom: 7
   },
   lastCategoryItem: {
     borderBottomWidth: 0.3, // ✅ Add bottom border only for last item
@@ -338,5 +353,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginLeft: 5, // Space between icon and text
+  },
+
+  iconCircle: {
+    width: 35,  // Circle width
+    height: 35, // Circle height
+    borderRadius: 20, // Make it round
+    backgroundColor: secondaryColor,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15, // Space between icon and text
+  },
+  scrollContainer: {
+    paddingBottom: 10, // Ensures smooth scrolling
+  },
+  iconText: {
+    color: "#00000", // White text inside circle
+    fontSize: 14,
+    fontWeight: "bold",
   },
 });
