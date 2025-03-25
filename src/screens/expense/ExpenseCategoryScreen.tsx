@@ -156,7 +156,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
         {loading ? (
           <ActivityIndicator size="large" color="blue" />
         ) : (
-          
+          <View style={{height:500}}>
           <FlatList
           data={filteredCategories}
           keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
@@ -199,7 +199,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
           scrollIndicatorInsets={{ right: 1 }} // Ensures visibility on some devices
           contentContainerStyle={styles.scrollContainer} // Custom styling
         />
-        
+        </View>
         )}
 
         {/* Floating Button */}

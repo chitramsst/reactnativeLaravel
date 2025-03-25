@@ -197,7 +197,7 @@ const ExpenseScreen = ({ navigation }) => {
         setEditExpense(item);
         setDescription(item.description);
         setAmount(item.amount);
-        setCategory(item.category_id);
+        setCategory(item.expense_category_id);
         setExpenseName(item.name);
         setModalVisible(true);
       }}>
@@ -291,14 +291,6 @@ const ExpenseScreen = ({ navigation }) => {
 
         )}
 
-        {/* Floating Button */}
-        {/* <TouchableOpacity style={styles.floatingButton} onPress={() => setModalVisible(true)}>
-  <View style={styles.floatingButtonContent}>
-    <Ionicons name="add" size={30} color={buttonColor} />
-    <Text style={[styles.floatingButtonText, { color: buttonColor }]}>Add</Text>
-  </View>
-</TouchableOpacity> */}
-
         <Modal visible={modalVisible} animationType="slide" transparent>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -361,7 +353,7 @@ const ExpenseScreen = ({ navigation }) => {
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Expense Date</Text>
                 <TouchableOpacity onPress={() => showCurrentDatePicker(true)} style={styles.dateButton}>
-                  <Text style={styles.dateText}>
+                  <Text style={styles.input}>
                     {date.toDateString()} {/* Display selected date */}
                   </Text>
                 </TouchableOpacity>
