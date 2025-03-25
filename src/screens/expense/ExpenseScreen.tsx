@@ -7,10 +7,11 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../../utils/globalStyle';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
 import { Picker } from "@react-native-picker/picker";
-  
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+
 const ExpenseScreen = ({ navigation }) => {
   const [categories, setCategories] = useState([]);
   const [data, setData] = useState([]);
@@ -20,7 +21,7 @@ const ExpenseScreen = ({ navigation }) => {
   const [editExpense, setEditExpense] = useState(null);
   const swipeableRefs = useRef({});
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(0);
   //const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
   const [filteredCategories, setFilteredCategories] = useState([]);
@@ -34,6 +35,7 @@ const ExpenseScreen = ({ navigation }) => {
   const [modalCategoyVisible, setModalCategoryVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
+  const [currentDatePicker, showCurrentDatePicker] = useState(false);
 
   const onChange = (event, selectedDate) => {
     setShowDatePicker(Platform.OS === 'ios'); // Keep picker open on iOS
@@ -60,7 +62,7 @@ const ExpenseScreen = ({ navigation }) => {
     try {
       const response = await api.get("/expense/categories"); // Ensure this is the correct endpoint
       setCategories(response.data.data);
-     // Alert.alert("Categories", JSON.stringify(response.data.data)); // Proper alert usage
+      // Alert.alert("Categories", JSON.stringify(response.data.data)); // Proper alert usage
     } catch (error) {
       console.error("Error fetching categories:", error.response?.data || error.message);
       Alert.alert("Error", error.response?.data?.message || "Failed to fetch categories");
@@ -96,55 +98,57 @@ const ExpenseScreen = ({ navigation }) => {
   };
   // Select category
   const handleSelectCategory = (category) => {
-    setSearchText(category.name);  // Show category name in input
+    setSearchText(category.name); // Show category name in input
     setSelectedCategory(category.id); // Store category ID
-    setModalCategoryVisible(false); // Close modal
+    setModalCategoryVisible(false);
   };
+
 
   // Add or Edit a expense
   const saveExpense = async () => {
-    if (!expenseName.trim() || !amount.trim() || !category.trim() || !date.trim()) {
+    if (!expenseName.trim() || !amount.trim() || !selectedCategory || !date) {
       Alert.alert("Validation Error", "All fields are required.");
+
       return;
     }
-
     try {
       const expenseData = {
         name: expenseName,
         amount,
-        category,
-        date,
+        category: selectedCategory, // Ensure this holds the category ID
+        date: date.toISOString(), // Convert Date object to string
         description,
       };
 
       if (editExpense) {
-        await api.post(`/expense/expense-categories/edit/${editExpense.id}`, expenseData);
-        setCategories(
-          categories.map(cat =>
-            cat.id === editExpense.id ? { ...cat, ...expenseData } : cat
-          )
-        );
-        if (swipeableRefs.current[editExpense.id]) {
-          swipeableRefs.current[editExpense.id].close();
-        }
+        await api.post(`/expense/edit/${editExpense.id}`, expenseData);
+        setData(data.map(exp => (exp.id === editExpense.id ? { ...exp, ...expenseData } : exp)));
       } else {
-        const response = await api.post("/expense/expense-categories/add", expenseData);
-        setCategories([response.data.data, ...categories]);
+        const response = await api.post("/expense/add", expenseData);
+        setData([response.data.data, ...data]);
       }
 
-      // Reset fields and close modal
+      // Reset form
       setModalVisible(false);
       setExpenseName("");
       setAmount("");
-      setCategory("");
-      setDate("");
+      setSelectedCategory(null);
+      setDate(new Date());
       setDescription("");
       setEditExpense(null);
-
     } catch (error) {
       console.error("Error saving expense:", error.response?.data || error.message);
+      Alert.alert("Error", "Failed to save expense.");
     }
   };
+
+  const resetInputFields = async () => {
+    setEditExpense(null);
+    setExpenseName("");
+    setAmount("");
+    setCategory(0);
+    setDescription("");
+  }
 
 
   const deleteExpense = async (id) => {
@@ -160,22 +164,23 @@ const ExpenseScreen = ({ navigation }) => {
           text: "Delete",
           onPress: async () => {
             try {
-              await api.delete(`/expense/expense-categories/delete/${id}`);
-              setCategories(categories.filter(cat => cat.id !== id));
+              await api.delete(`/expense/delete/${id}`);
+              setData(data.filter(exp => exp.id !== id));
 
               if (swipeableRefs.current[id]) {
                 swipeableRefs.current[id].close();
               }
-
             } catch (error) {
               console.error("Error deleting expense:", error.response?.data || error.message);
+              Alert.alert("Error", "Failed to delete expense.");
             }
           },
-          style: "destructive", // Makes the delete button red (iOS only)
+          style: "destructive",
         },
       ]
     );
   };
+
 
   useEffect(() => {
     const fetchDataAsync = async () => {
@@ -190,6 +195,9 @@ const ExpenseScreen = ({ navigation }) => {
     <View style={styles.swipeActions}>
       <TouchableOpacity style={styles.editButton} onPress={() => {
         setEditExpense(item);
+        setDescription(item.description);
+        setAmount(item.amount);
+        setCategory(item.category_id);
         setExpenseName(item.name);
         setModalVisible(true);
       }}>
@@ -209,8 +217,8 @@ const ExpenseScreen = ({ navigation }) => {
         <View style={styles.titleContainer}>
           {/* Back Arrow Icon */}
           <TouchableOpacity onPress={() => navigation.navigate("Dashboard")} style={styles.backIcon}>
-                  <Ionicons name="arrow-back" size={20} color={primaryColor} />
-                </TouchableOpacity>
+            <Ionicons name="arrow-back" size={20} color={primaryColor} />
+          </TouchableOpacity>
 
           {/* Title (Centered) */}
           <View>
@@ -219,7 +227,7 @@ const ExpenseScreen = ({ navigation }) => {
           </View>
 
           {/* Add Icon on Right */}
-          <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addIcon}>
+          <TouchableOpacity onPress={() => { setModalVisible(true); resetInputFields(); }} style={styles.addIcon}>
             <Ionicons name="add" size={20} color={primaryColor} />
           </TouchableOpacity>
         </View>
@@ -318,21 +326,21 @@ const ExpenseScreen = ({ navigation }) => {
 
                 {/* Category Picker Modal */}
                 <Modal visible={modalCategoyVisible} animationType="slide" transparent>
-                <TouchableWithoutFeedback onPress={() => setModalCategoryVisible(false)}>
-                  <View style={styles.modalCategoryContainer}>
-                    <View style={styles.modalCategoryContent}>
-                      <FlatList
-                        data={filteredCategories.length ? filteredCategories : categories}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity style={styles.categoryModelItem} onPress={() => handleSelectCategory(item)}>
-                            <Text style={styles.categoryModelText}>{item.name}</Text>
-                          </TouchableOpacity>
-                        )}
-                      />
+                  <TouchableWithoutFeedback onPress={() => setModalCategoryVisible(false)}>
+                    <View style={styles.modalCategoryContainer}>
+                      <View style={styles.modalCategoryContent}>
+                        <FlatList
+                          data={filteredCategories.length ? filteredCategories : categories}
+                          keyExtractor={(item) => item.id.toString()}
+                          renderItem={({ item }) => (
+                            <TouchableOpacity style={styles.categoryModelItem} onPress={() => handleSelectCategory(item)}>
+                              <Text style={styles.categoryModelText}>{item.name}</Text>
+                            </TouchableOpacity>
+                          )}
+                        />
+                      </View>
                     </View>
-                  </View>
-</TouchableWithoutFeedback>
+                  </TouchableWithoutFeedback>
                 </Modal>
 
               </View>
@@ -349,6 +357,34 @@ const ExpenseScreen = ({ navigation }) => {
                 />
               </View>
 
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Expense Date</Text>
+                <TouchableOpacity onPress={() => showCurrentDatePicker(true)} style={styles.dateButton}>
+                  <Text style={styles.dateText}>
+                    {date.toDateString()} {/* Display selected date */}
+                  </Text>
+                </TouchableOpacity>
+
+
+
+
+                {/* Date Picker Component */}
+                {currentDatePicker && (
+                  <DateTimePicker
+                    value={date}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      if (selectedDate) {
+                        setDate(selectedDate);
+                      }
+                      showCurrentDatePicker(false); // Close picker after selection
+                    }}
+                  />
+                )}
+
+              </View>
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Description</Text>
@@ -369,8 +405,7 @@ const ExpenseScreen = ({ navigation }) => {
                   style={[styles.button, styles.cancelButton]}
                   onPress={() => {
                     setModalVisible(false);
-                    setEditExpense(null);
-                    setExpenseName("");
+                    resetInputFields();
                   }}
                 >
                   <Text style={styles.buttonText}>Cancel</Text>
@@ -382,9 +417,6 @@ const ExpenseScreen = ({ navigation }) => {
             </View>
           </View>
         </Modal>
-
-
-
       </View>
     </GestureHandlerRootView>
   );
@@ -474,7 +506,7 @@ const styles = StyleSheet.create({
   },
 
   modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.8)" },
-  
+
   modalContent: { backgroundColor: "#1e1e1e", padding: 20, borderRadius: 10, width: "80%" },
   modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 20, color: primaryColor },
   inputGroup: {
@@ -565,23 +597,6 @@ const styles = StyleSheet.create({
   halfInputGroup: {
     width: "48%",
   },
-  // inputGroup: {
-  //   marginBottom: 12,
-  // },
-  // label: {
-  //   fontSize: 14,
-  //   fontWeight: "600",
-  //   color: "#fff",
-  //   marginBottom: 5,
-  // },
-  // input: {
-  //   borderWidth: 1,
-  //   borderColor: "#444",
-  //   padding: 10,
-  //   borderRadius: 5,
-  //   color: "#fff",
-  //   backgroundColor: "#222",
-  // },
   dropdown: {
     borderWidth: 1,
     borderColor: "#444",
@@ -620,7 +635,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   modalCategoryContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.8)" },
-  modalCategoryContent: { backgroundColor: "#1e1e1e", padding: 5, borderRadius: 10, width: "80%", height:'40%' },
+  modalCategoryContent: { backgroundColor: "#1e1e1e", padding: 5, borderRadius: 10, width: "80%", height: '40%' },
   categoryModelItem: {
     padding: 20,
     borderBottomWidth: 0.3,
