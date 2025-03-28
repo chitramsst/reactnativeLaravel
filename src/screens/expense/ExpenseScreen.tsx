@@ -44,6 +44,11 @@ const ExpenseScreen = ({ navigation }) => {
     }
   };
 
+  const handleAmountChange = (text) => {
+    // Ensure only valid numeric input
+    const numericValue = text.replace(/[^0-9.]/g, ""); // Allow only numbers and decimal points
+    setAmount(numericValue);
+};
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(Platform.OS === "ios"); // Keep picker open on iOS
@@ -148,6 +153,8 @@ const ExpenseScreen = ({ navigation }) => {
     setAmount("");
     setCategory(0);
     setDescription("");
+    setSelectedCategory(null);
+    setEditExpense(null);
   }
 
 
@@ -189,17 +196,38 @@ const ExpenseScreen = ({ navigation }) => {
     };
 
     fetchDataAsync();
-  }, []);
+  }, [amount]);
+
+
+  // Fetch categories from API
+  const editItemFill = async (item) => {
+    setLoading(true);
+    try {
+      setEditExpense(item);
+      setDescription(item.description);
+      setAmount(String(item.amount));
+      const category = categories?.find(cat => cat.id == item.expense_category_id);
+      if (category) {
+        handleSelectCategory(category); // Set the category if found
+      }
+      if (item.date) {
+        setDate(new Date(item.date)); 
+      }
+  
+      setExpenseName(item.name);
+      setModalVisible(true);
+    } catch (error) {
+      console.error("Error fetching categories:", error.response?.data || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const renderRightActions = (item) => (
     <View style={styles.swipeActions}>
       <TouchableOpacity style={styles.editButton} onPress={() => {
-        setEditExpense(item);
-        setDescription(item.description);
-        setAmount(item.amount);
-        setCategory(item.expense_category_id);
-        setExpenseName(item.name);
-        setModalVisible(true);
+        editItemFill(item);
       }}>
         <Ionicons name="pencil" size={20} color='#000' />
       </TouchableOpacity>
@@ -245,7 +273,7 @@ const ExpenseScreen = ({ navigation }) => {
         {loading ? (
           <ActivityIndicator size="large" color="blue" />
         ) : (
-
+          <View style={{height:500}}>
           <FlatList
             data={filteredExpenses}
             keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
@@ -288,7 +316,7 @@ const ExpenseScreen = ({ navigation }) => {
             scrollIndicatorInsets={{ right: 1 }} // Ensures visibility on some devices
             contentContainerStyle={styles.scrollContainer} // Custom styling
           />
-
+          </View>
         )}
 
         <Modal visible={modalVisible} animationType="slide" transparent>
@@ -345,7 +373,8 @@ const ExpenseScreen = ({ navigation }) => {
                   placeholder="Enter Expense Amount"
                   placeholderTextColor={secondaryColor}
                   value={amount}
-                  onChangeText={setAmount}
+                  onChangeText={handleAmountChange}
+                  //keyboardType="numeric" 
                 />
               </View>
 
