@@ -8,15 +8,20 @@ import { login } from '../redux/actions/authActions';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { designBackgoundColor, primaryColor, secondaryColor, buttonColor, buttonTextColor } from '../utils/globalStyle'; 
 import Toast from 'react-native-toast-message';
+import { NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../types/types.ts';
+import {RootState} from '../types/types.ts'
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const route = useRoute(); 
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector(state => state.auth);
+  const dispatch: ThunkDispatch<RootState, void, AnyAction> = useDispatch();
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const handleLogin = () => {
     if (!email.trim() || !password.trim()) {
@@ -33,7 +38,7 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (isAuthenticated && route.name !== 'Dashboard') {
-      navigation.replace('Dashboard');
+      navigation.navigate('DashboardMain');
     }
   }, [isAuthenticated, navigation, route.name]); 
 

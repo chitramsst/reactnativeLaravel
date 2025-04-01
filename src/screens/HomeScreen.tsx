@@ -5,10 +5,13 @@ import {
 import { useSelector } from 'react-redux';
 import { designBackgoundColor, primaryColor, secondaryColor } from "../utils/globalStyle"; // ✅ Corrected import name
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../types/types.ts';
+import {RootState} from '../types/types.ts'
 
 const HomeScreen = () => {
-  const { isAuthenticated } = useSelector(state => state.auth);
-    const navigation = useNavigation();
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const route = useRoute();
 
   // useEffect(() => {
@@ -22,13 +25,13 @@ const HomeScreen = () => {
 
     useEffect(() => {
       if (isAuthenticated && route.name !== 'Dashboard') {
-        navigation.replace('Dashboard');
+        navigation.navigate('DashboardMain');
       }
     }, [isAuthenticated, navigation, route.name]); 
   
 
   const handleScreenPress = () => {
-    navigation.navigate(isAuthenticated ? 'Dashboard' : 'Login');
+    navigation.navigate(isAuthenticated ? 'DashboardMain' : 'Login');
   };
 
   return (

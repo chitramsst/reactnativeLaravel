@@ -1,63 +1,79 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  View, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, StyleSheet, ActivityIndicator, ScrollView, Alert
+  View, Button, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, StyleSheet, ActivityIndicator, ScrollView, Alert
 } from "react-native";
 import { api } from "../../config/api"; // Import Axios instance
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { AxiosError } from "axios";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../../utils/globalStyle';
 import { Platform } from 'react-native';
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../types/types.ts';
+
+const ExpenseScreen = () => {
+
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  interface Expense {
+    id: string | number; 
+    name: string;
+    amount: string;
+    category: number;
+    date: string;
+    description: string;
+  }
 
 
-const ExpenseScreen = ({ navigation }) => {
-  const [categories, setCategories] = useState([]);
-  const [data, setData] = useState([]);
+  interface Category {
+    id: number;
+    name: string;
+  }
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [data, setData] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [expenseName, setExpenseName] = useState("");
-  const [editExpense, setEditExpense] = useState(null);
-  const swipeableRefs = useRef({});
+  const [editExpense, setEditExpense] = useState<Expense | null>(null);
+  const swipeableRefs = useRef<Record<string, Swipeable | null>>({});
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState(0);
-  //const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
-  const [filteredCategories, setFilteredCategories] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   const [searchText, setSearchText] = useState("");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const [date, setDate] = useState(new Date());
+  const [date, setCurrentDate] = useState(new Date());
   const [modalCategoyVisible, setModalCategoryVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   const [currentDatePicker, showCurrentDatePicker] = useState(false);
 
-  const onChange = (event, selectedDate) => {
-    setShowDatePicker(Platform.OS === 'ios'); // Keep picker open on iOS
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
-  };
-
-  const handleAmountChange = (text) => {
+  const handleAmountChange = (text: string) => {
     // Ensure only valid numeric input
     const numericValue = text.replace(/[^0-9.]/g, ""); // Allow only numbers and decimal points
     setAmount(numericValue);
-};
-
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(Platform.OS === "ios"); // Keep picker open on iOS
-    if (selectedDate) setDate(selectedDate);
   };
 
+  useEffect(() => {
+    if (currentDatePicker) {
+      setTimeout(() => {
+        setShowPicker(true);
+      }, 100);
+    }
+  }, [currentDatePicker]);
 
   // Filtered categories based on search query
-  const filteredExpenses = data.filter(cat =>
+  const filteredExpenses = data.filter((cat) =>
     cat.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -69,8 +85,8 @@ const ExpenseScreen = ({ navigation }) => {
       setCategories(response.data.data);
       // Alert.alert("Categories", JSON.stringify(response.data.data)); // Proper alert usage
     } catch (error) {
-      console.error("Error fetching categories:", error.response?.data || error.message);
-      Alert.alert("Error", error.response?.data?.message || "Failed to fetch categories");
+     // console.error("Error fetching categories:", error.response?.data || error.message);
+     // Alert.alert("Error", error.response?.data?.message || "Failed to fetch categories");
     } finally {
       setLoading(false);
     }
@@ -83,16 +99,18 @@ const ExpenseScreen = ({ navigation }) => {
       const response = await api.get("/expense/get-expenses");
       setData(response.data.data);
     } catch (error) {
-      console.error("Error fetching categories:", error.response?.data || error.message);
+        const axiosError = error as AxiosError;
+        console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
     } finally {
       setLoading(false);
     }
   };
 
   // Filter categories based on input
-  const handleSearch = (text) => {
+  const handleSearch = (text: string) => {
     setSearchText(text);
     if (text.trim()) {
+      
       const filtered = categories.filter(category =>
         category.name.toLowerCase().includes(text.toLowerCase())
       );
@@ -102,9 +120,9 @@ const ExpenseScreen = ({ navigation }) => {
     }
   };
   // Select category
-  const handleSelectCategory = (category) => {
+  const handleSelectCategory = (category : Category) => {
     setSearchText(category.name); // Show category name in input
-    setSelectedCategory(category.id); // Store category ID
+    setSelectedCategory(category); // Store category ID
     setModalCategoryVisible(false);
   };
 
@@ -120,14 +138,20 @@ const ExpenseScreen = ({ navigation }) => {
       const expenseData = {
         name: expenseName,
         amount,
-        category: selectedCategory, // Ensure this holds the category ID
+        category: selectedCategory.id, // Ensure this holds the category ID
         date: date.toISOString(), // Convert Date object to string
         description,
       };
 
       if (editExpense) {
         await api.post(`/expense/edit/${editExpense.id}`, expenseData);
-        setData(data.map(exp => (exp.id === editExpense.id ? { ...exp, ...expenseData } : exp)));
+
+        setData(prevData => 
+          prevData.map(exp => 
+            exp.id === editExpense.id ? { ...exp, ...expenseData } : exp
+          )
+        );
+
       } else {
         const response = await api.post("/expense/add", expenseData);
         setData([response.data.data, ...data]);
@@ -138,11 +162,12 @@ const ExpenseScreen = ({ navigation }) => {
       setExpenseName("");
       setAmount("");
       setSelectedCategory(null);
-      setDate(new Date());
+      setCurrentDate(new Date());
       setDescription("");
       setEditExpense(null);
     } catch (error) {
-      console.error("Error saving expense:", error.response?.data || error.message);
+      const axiosError = error as AxiosError;
+      console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
       Alert.alert("Error", "Failed to save expense.");
     }
   };
@@ -158,7 +183,7 @@ const ExpenseScreen = ({ navigation }) => {
   }
 
 
-  const deleteExpense = async (id) => {
+  const deleteExpense = async (id: string | number) => {
     Alert.alert(
       "Confirm Deletion",
       "Are you sure you want to delete this expense?",
@@ -178,7 +203,8 @@ const ExpenseScreen = ({ navigation }) => {
                 swipeableRefs.current[id].close();
               }
             } catch (error) {
-              console.error("Error deleting expense:", error.response?.data || error.message);
+              const axiosError = error as AxiosError;
+        console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
               Alert.alert("Error", "Failed to delete expense.");
             }
           },
@@ -200,7 +226,7 @@ const ExpenseScreen = ({ navigation }) => {
 
 
   // Fetch categories from API
-  const editItemFill = async (item) => {
+  const editItemFill = async (item : any) => {
     setLoading(true);
     try {
       setEditExpense(item);
@@ -211,20 +237,21 @@ const ExpenseScreen = ({ navigation }) => {
         handleSelectCategory(category); // Set the category if found
       }
       if (item.date) {
-        setDate(new Date(item.date)); 
+        setCurrentDate(new Date(item.date));
       }
-  
+
       setExpenseName(item.name);
       setModalVisible(true);
     } catch (error) {
-      console.error("Error fetching categories:", error.response?.data || error.message);
+      const axiosError = error as AxiosError;
+        console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
     } finally {
       setLoading(false);
     }
   };
 
 
-  const renderRightActions = (item) => (
+  const renderRightActions = (item : any) => (
     <View style={styles.swipeActions}>
       <TouchableOpacity style={styles.editButton} onPress={() => {
         editItemFill(item);
@@ -244,7 +271,7 @@ const ExpenseScreen = ({ navigation }) => {
         {/* Title Section with Add Button */}
         <View style={styles.titleContainer}>
           {/* Back Arrow Icon */}
-          <TouchableOpacity onPress={() => navigation.navigate("Dashboard")} style={styles.backIcon}>
+          <TouchableOpacity onPress={() => navigation.navigate('DashboardMain')} style={styles.backIcon}>
             <Ionicons name="arrow-back" size={20} color={primaryColor} />
           </TouchableOpacity>
 
@@ -255,7 +282,7 @@ const ExpenseScreen = ({ navigation }) => {
           </View>
 
           {/* Add Icon on Right */}
-          <TouchableOpacity onPress={() => { setModalVisible(true); resetInputFields(); }} style={styles.addIcon}>
+          <TouchableOpacity onPress={() => { setModalVisible(true); resetInputFields(); }} >
             <Ionicons name="add" size={20} color={primaryColor} />
           </TouchableOpacity>
         </View>
@@ -273,49 +300,56 @@ const ExpenseScreen = ({ navigation }) => {
         {loading ? (
           <ActivityIndicator size="large" color="blue" />
         ) : (
-          <View style={{height:500}}>
-          <FlatList
-            data={filteredExpenses}
-            keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
-            renderItem={({ item, index }) => {
-              const isLastItem = index === filteredExpenses.length - 1;
+          <View style={{ height: 500 }}>
+            <FlatList
+              data={filteredExpenses}
+              keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
+              renderItem={({ item, index }) => {
+                const isLastItem = index === filteredExpenses.length - 1;
 
-              return (
-                <Swipeable
-                  ref={(ref) => (item.id ? (swipeableRefs.current[item.id] = ref) : null)}
-                  renderRightActions={() => renderRightActions(item)}
-                  overshootRight={false}
-                >
-                  <View
-                    style={[
-                      styles.expenseItem,
-                      isLastItem && styles.lastExpenseItem,
-                    ]}
+                return (
+                  <Swipeable
+                 //   ref={(ref) => (item.id ? (swipeableRefs.current[item.id] = ref) : null)}
+                    
+                 ref={(ref) => {
+                  if (item.id !== undefined && item.id !== null) {
+                    swipeableRefs.current[String(item.id)] = ref;
+                  }
+                }}
+
+                    renderRightActions={() => renderRightActions(item)}
+                    overshootRight={false}
                   >
-                    <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                      {/* ✅ Round Icon with First Letter */}
-                      <View style={styles.iconCircle}>
-                        <Text style={styles.iconText}>
-                          {item.name.charAt(0).toUpperCase()}
-                        </Text>
-                      </View>
+                    <View
+                      style={[
+                        styles.expenseItem,
+                        isLastItem && styles.lastExpenseItem,
+                      ]}
+                    >
+                      <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                        {/* ✅ Round Icon with First Letter */}
+                        <View style={styles.iconCircle}>
+                          <Text style={styles.iconText}>
+                            {item.name.charAt(0).toUpperCase()}
+                          </Text>
+                        </View>
 
-                      {/* ✅ Expense Name (with spacing) */}
-                      <Text style={styles.expenseText}>{item.name}</Text>
+                        {/* ✅ Expense Name (with spacing) */}
+                        <Text style={styles.expenseText}>{item.name}</Text>
 
-                      {/* ✅ Right Arrow Icon */}
-                      <View style={{ marginLeft: "auto" }}>
-                        <Ionicons name="chevron-forward" size={18} color={secondaryColor} style={styles.rightIcon} />
+                        {/* ✅ Right Arrow Icon */}
+                        <View style={{ marginLeft: "auto" }}>
+                          <Ionicons name="chevron-forward" size={18} color={secondaryColor} style={styles.rightIcon} />
+                        </View>
                       </View>
                     </View>
-                  </View>
-                </Swipeable>
-              );
-            }}
-            showsVerticalScrollIndicator={true} // Show scrollbar
-            scrollIndicatorInsets={{ right: 1 }} // Ensures visibility on some devices
-            contentContainerStyle={styles.scrollContainer} // Custom styling
-          />
+                  </Swipeable>
+                );
+              }}
+              showsVerticalScrollIndicator={true} // Show scrollbar
+              scrollIndicatorInsets={{ right: 1 }} // Ensures visibility on some devices
+              contentContainerStyle={styles.scrollContainer} // Custom styling
+            />
           </View>
         )}
 
@@ -374,31 +408,61 @@ const ExpenseScreen = ({ navigation }) => {
                   placeholderTextColor={secondaryColor}
                   value={amount}
                   onChangeText={handleAmountChange}
-                  //keyboardType="numeric" 
+                //keyboardType="numeric" 
                 />
               </View>
 
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Expense Date</Text>
-                <TouchableOpacity onPress={() => showCurrentDatePicker(true)} style={styles.dateButton}>
+                <TouchableOpacity onPress={() => showCurrentDatePicker(true)}>
                   <Text style={styles.input}>
                     {date.toDateString()} {/* Display selected date */}
                   </Text>
                 </TouchableOpacity>
 
-
-
+                {Platform.OS === "ios" && currentDatePicker && showPicker && (
+                  <Modal transparent animationType="slide" visible={currentDatePicker}>
+                    <View style={styles.modalDateContainer}>
+                      <View style={styles.modalDateContent}>
+                        <DateTimePicker
+                          value={date}
+                          mode="date"
+                          display="inline" // Works better for iOS
+                          style={{ height: '100%', width: '100%', justifyContent: "center", alignItems: "center" }}
+                          onChange={(event, selectedDate) => {
+                            if (selectedDate) {
+                              setCurrentDate(selectedDate);
+                              console.log("Selected Date:", selectedDate);
+                             // setTimeout(() => setShowPicker(false), 100); // Delay to ensure it closes
+                            } 
+                            //showCurrentDatePicker(false); // ✅ Ensure modal closes
+                            //setShowPicker(false); // ✅ Ensure the picker disappears
+                          }}
+                        />
+                        <TouchableOpacity
+                         
+                          onPress={() => {
+                            showCurrentDatePicker(false);
+                            setShowPicker(false);
+                          }}
+                        >
+                          <Text style={styles.buttonText}>Done</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </Modal>
+                )}
 
                 {/* Date Picker Component */}
-                {currentDatePicker && (
+                {Platform.OS === "android" && currentDatePicker && (
                   <DateTimePicker
                     value={date}
                     mode="date"
-                    display="default"
+                    display="calendar"
                     onChange={(event, selectedDate) => {
                       if (selectedDate) {
-                        setDate(selectedDate);
+                        setCurrentDate(selectedDate);
                       }
                       showCurrentDatePicker(false); // Close picker after selection
                     }}
@@ -527,7 +591,6 @@ const styles = StyleSheet.create({
   },
 
   modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.8)" },
-
   modalContent: { backgroundColor: "#1e1e1e", padding: 20, borderRadius: 10, width: "80%" },
   modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 20, color: primaryColor },
   inputGroup: {
@@ -665,5 +728,19 @@ const styles = StyleSheet.create({
   categoryModelText: {
     fontSize: 12,
     color: primaryColor
+  },
+  modalDateContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)", // Dim background
+  },
+  modalDateContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: 320, // Ensure enough width for content
+    height: 350,
+    alignItems: "center"
   },
 });

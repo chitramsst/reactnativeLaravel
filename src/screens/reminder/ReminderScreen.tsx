@@ -25,17 +25,33 @@ import {
 } from '../../utils/globalStyle';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
+import { CalendarDate } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 registerTranslation('en-GB', enGB)
 
-const ReminderScreen = ({ navigation }) => {
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../types/types.ts';
+
+interface Reminder {
+  id: number;
+  text: string;
+  date: string; // Store as ISO string
+  completed: boolean;
+}
+
+
+const ReminderScreen = () => {
+const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+
   const [modalVisible, setModalVisible] = useState(false);
-  const [reminders, setReminders] = useState([]);
+  const [reminders, setReminders] = useState<Reminder[]>([]);
   const [newReminderText, setNewReminderText] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [isPickerVisible, setPickerVisible] = useState(false);
-  const [currentTime, setCurrentTime] = useState(Date.now());
   const [time, setTime] = useState<{ hours: number; minutes: number } | null>(null);
+  const [isPickerVisible, setPickerVisible] = useState(false);
   const [timeVisible, setTimeVisible] = useState(false);
+  const [currentTime, setCurrentTime] = useState(Date.now());
 
 
   useEffect(() => {
@@ -44,7 +60,7 @@ const ReminderScreen = ({ navigation }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const saveReminders = async (reminders) => {
+  const saveReminders = async (reminders : Reminder[]) => {
     try {
       await AsyncStorage.setItem('reminders', JSON.stringify(reminders));
     } catch (error) {
@@ -76,7 +92,7 @@ const ReminderScreen = ({ navigation }) => {
   };
 
   const onConfirmSingle = React.useCallback(
-    (params) => {
+    (params : { date: CalendarDate }) => {
       setPickerVisible(false);
       if (params.date instanceof Date && !isNaN(params.date.getTime())) {
         setSelectedDate(params.date); // Ensure it's a valid Date object
@@ -108,7 +124,7 @@ const ReminderScreen = ({ navigation }) => {
       return;
     }
 
-    const newReminder = {
+    const newReminder: Reminder  = {
       id: Date.now(),
       text: newReminderText,
       date: reminderDateTime.toISOString(),
@@ -127,7 +143,7 @@ const ReminderScreen = ({ navigation }) => {
     scheduleNotification(newReminder);
   };
 
-  const scheduleNotification = async (reminder) => {
+  const scheduleNotification = async (reminder : Reminder) => {
     try {
       await notifee.requestPermission();
       await notifee.createTriggerNotification(
@@ -143,7 +159,7 @@ const ReminderScreen = ({ navigation }) => {
     }
   };
 
-  const handleDeleteReminder = (id) => {
+  const handleDeleteReminder = (id : String | Number) => {
     Alert.alert('Delete Reminder', 'Are you sure?', [
       { text: 'Cancel', style: 'cancel' },
       {
@@ -169,7 +185,7 @@ const ReminderScreen = ({ navigation }) => {
           <TouchableOpacity onPress={() => {
             setSelectedDate(null); setNewReminderText(''); 
             setModalVisible(true);
-          }} style={styles.addIcon}>
+          }} >
             <Ionicons name="add" size={24} color={primaryColor} />
           </TouchableOpacity>
         </View>
@@ -206,7 +222,7 @@ const ReminderScreen = ({ navigation }) => {
         <Modal visible={modalVisible} animationType="slide" transparent>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={[styles.modalTitle, { paddingBottom: 10, color: primaryColor }]}>Reminder Info</Text>
+              <Text style={[{ paddingBottom: 10, color: primaryColor }]}>Reminder Info</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Enter Reminder"

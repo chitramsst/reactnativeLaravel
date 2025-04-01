@@ -17,6 +17,9 @@ import HomeScreen from "../HomeScreen";
 import ExpenseScreen from "../expense/ExpenseScreen";
 import ExpenseCategoryScreen from "../expense/ExpenseCategoryScreen";
 import ReminderScreen from "../reminder/ReminderScreen";
+import { RootStackParamList } from '../../types/types.ts';
+import {RootState} from '../../types/types.ts'
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -93,7 +96,7 @@ const DashboardTabNavigator = () => {
         }}
         >
           <Ionicons
-            name={iconName}
+            name={iconName ?? 'alert-circle'}
             size={size/1.5} // ✅ Adjusted for perfect fit
             color={focused ? "#000" : color}
           /> 
@@ -155,7 +158,7 @@ const DashboardTabNavigator = () => {
 };
 
 const AppNavigator = () => {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   return (
     <NavigationContainer>

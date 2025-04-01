@@ -8,14 +8,31 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../../utils/globalStyle';
 import Toast from "react-native-toast-message";
+import { AxiosError } from "axios";
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../types/types.ts';
 
-const ExpenseCategoryScreen = ({ navigation }) => {
-  const [categories, setCategories] = useState([]);
+const ExpenseCategoryScreen = () => {
+
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  interface Category {
+    id: number;
+    name: string;
+  }
+  
+  interface SwipeableRefs {
+    [key: string]: Swipeable | null; // Assuming your refs are of type Swipeable
+  }
+  
+  const swipeableRefs = useRef<SwipeableRefs>({});
+
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryName, setCategoryName] = useState("");
-  const [editCategory, setEditCategory] = useState(null);
-  const swipeableRefs = useRef({});
+  const [editCategory, setEditCategory] = useState<Category | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -23,6 +40,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
   const filteredCategories = categories.filter(cat =>
     cat.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
 
   // Fetch categories from API
   const fetchCategories = async () => {
@@ -31,7 +49,8 @@ const ExpenseCategoryScreen = ({ navigation }) => {
       const response = await api.get("/expense/expense-categories");
       setCategories(response.data.data);
     } catch (error) {
-      console.error("Error fetching categories:", error.response?.data || error.message);
+      const axiosError = error as AxiosError;
+              console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
     } finally {
       setLoading(false);
     }
@@ -45,7 +64,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
         await api.post(`/expense/expense-categories/edit/${editCategory.id}`, { name: categoryName });
         setCategories(categories.map(cat => cat.id === editCategory.id ? { ...cat, name: categoryName } : cat));
         if (editCategory && swipeableRefs.current[editCategory.id]) {
-          swipeableRefs.current[editCategory.id].close();
+          swipeableRefs.current[editCategory.id]?.close();  
         }
       } else {
         const response = await api.post("/expense/expense-categories/add", { name: categoryName });
@@ -56,11 +75,12 @@ const ExpenseCategoryScreen = ({ navigation }) => {
       setEditCategory(null);
 
     } catch (error) {
-      console.error("Error saving category:", error.response?.data || error.message);
+      const axiosError = error as AxiosError;
+              console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
     }
   };
 
-  const deleteCategory = async (id) => {
+  const deleteCategory = async (id: string | number) => {
     Alert.alert(
       "Confirm Deletion",
       "Are you sure you want to delete this category?",
@@ -92,7 +112,8 @@ const ExpenseCategoryScreen = ({ navigation }) => {
               }
 
             } catch (error) {
-              console.error("Error deleting category:", error.response?.data || error.message);
+              const axiosError = error as AxiosError;
+                      console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
             }
           },
           style: "destructive", // Makes the delete button red (iOS only)
@@ -105,7 +126,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
     fetchCategories();
   }, []);
 
-  const renderRightActions = (item) => (
+  const renderRightActions = (item : Category) => (
     <View style={styles.swipeActions}>
       <TouchableOpacity style={styles.editButton} onPress={() => {
         setEditCategory(item);
@@ -138,7 +159,7 @@ const ExpenseCategoryScreen = ({ navigation }) => {
           </View>
 
           {/* Add Icon on Right */}
-          <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addIcon}>
+          <TouchableOpacity onPress={() => setModalVisible(true)} >
             <Ionicons name="add" size={20} color={primaryColor} />
           </TouchableOpacity>
         </View>
@@ -165,7 +186,14 @@ const ExpenseCategoryScreen = ({ navigation }) => {
             
             return (
               <Swipeable
-                ref={(ref) => (item.id ? (swipeableRefs.current[item.id] = ref) : null)}
+                //ref={(ref) => (item.id ? (swipeableRefs.current[item.id] = ref) : null)}
+
+                ref={(ref) => {
+                  if (item.id) {
+                    swipeableRefs.current[item.id] = ref;  // Assign Swipeable ref for the item.id
+                  }
+                }}
+
                 renderRightActions={() => renderRightActions(item)}
                 overshootRight={false}
               >

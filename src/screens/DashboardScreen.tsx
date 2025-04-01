@@ -5,10 +5,17 @@ import { api } from '../config/api';
 import { logout } from '../redux/actions/authActions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { textColor, designBackgoundColor, designTextColor, buttonColor, buttonTextColor, buttonTextSecondaryColor, primaryColor, secondaryColor } from '../utils/globalStyle';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../types/types.ts';
+import {RootState} from '../types/types.ts'
 
-const DashboardScreen = ({ navigation }) => {
+
+const DashboardScreen = () => {
+   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const [expenseData, setExpenseData] = useState({
     totalExpenses: 0,
     monthlyBudget: 5000,
@@ -18,7 +25,7 @@ const DashboardScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigation.replace('Login');
+      navigation.navigate('Login');
     }
   }, [isAuthenticated, navigation]);
 
