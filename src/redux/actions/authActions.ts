@@ -1,7 +1,6 @@
-import { LOGIN_SUCCESS, LOGOUT } from '../types.js';
 import { api, API_URL } from "../../config/api.js"; 
 import Toast from 'react-native-toast-message';
-import { AuthActionTypes } from '../../types/types.js';
+import { AuthActionTypes } from '../../types/types.ts';
 import { Dispatch } from 'redux';
 import { AxiosError } from "axios";
 
