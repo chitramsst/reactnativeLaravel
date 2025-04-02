@@ -1,9 +1,9 @@
 export type RootStackParamList = {
     Expense: undefined; 
-    DashboardMain: undefined; 
     ExpenseCategory : undefined;
     Reminder: undefined;
     Login: undefined;
+    Dashboard: undefined;
   };
 
   interface AuthState {

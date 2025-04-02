@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  View, Button, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, StyleSheet, ActivityIndicator, ScrollView, Alert
+  KeyboardAvoidingView,
+  Keyboard,View, Button, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, StyleSheet, ActivityIndicator, ScrollView, Alert
 } from "react-native";
 import { api } from "../../config/api"; // Import Axios instance
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -271,7 +272,7 @@ const ExpenseScreen = () => {
         {/* Title Section with Add Button */}
         <View style={styles.titleContainer}>
           {/* Back Arrow Icon */}
-          <TouchableOpacity onPress={() => navigation.navigate('DashboardMain')} style={styles.backIcon}>
+          <TouchableOpacity onPress={() => navigation.navigate('Dashboard')} style={styles.backIcon}>
             <Ionicons name="arrow-back" size={20} color={primaryColor} />
           </TouchableOpacity>
 
@@ -352,25 +353,28 @@ const ExpenseScreen = () => {
             />
           </View>
         )}
+<Modal visible={modalVisible} animationType="slide" transparent>
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.modalContainer}
+    >
+      <View style={styles.modalContent}>
+        <Text style={styles.modalTitle}>{editExpense ? "Edit Expense" : "Add Expense"}</Text>
 
-        <Modal visible={modalVisible} animationType="slide" transparent>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>{editExpense ? "Edit Expense" : "Add Expense"}</Text>
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Name</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter Expense Name"
-                  placeholderTextColor={secondaryColor}
-                  value={expenseName}
-                  onChangeText={setExpenseName}
-                />
-              </View>
-
-              {/* Category Picker */}
-              <View style={styles.inputGroup}>
+        {/* Name Input */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Expense Name"
+            placeholderTextColor={secondaryColor}
+            value={expenseName}
+            onChangeText={setExpenseName}
+          />
+        </View>
+{/* Category Picker */}
+<View style={styles.inputGroup}>
                 <Text style={styles.label}>Category</Text>
                 <TouchableOpacity onPress={() => setModalCategoryVisible(true)} style={styles.input}>
                   <Text style={{ color: searchText ? primaryColor : secondaryColor }}>
@@ -399,21 +403,19 @@ const ExpenseScreen = () => {
 
               </View>
 
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Amount (Rs.)</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter Expense Amount"
-                  placeholderTextColor={secondaryColor}
-                  value={amount}
-                  onChangeText={handleAmountChange}
-                //keyboardType="numeric" 
-                />
-              </View>
-
-
-              <View style={styles.inputGroup}>
+        {/* Amount Input */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Amount (Rs.)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Expense Amount"
+            placeholderTextColor={secondaryColor}
+            value={amount}
+            onChangeText={handleAmountChange}
+            keyboardType="numeric" // ✅ Ensures only numbers
+          />
+        </View>
+        <View style={styles.inputGroup}>
                 <Text style={styles.label}>Expense Date</Text>
                 <TouchableOpacity onPress={() => showCurrentDatePicker(true)}>
                   <Text style={styles.input}>
@@ -470,38 +472,40 @@ const ExpenseScreen = () => {
                 )}
 
               </View>
+        {/* Description Input */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Description</Text>
+          <TextInput
+            style={styles.textArea}
+            placeholder="Enter Description"
+            placeholderTextColor={secondaryColor}
+            value={description}
+            onChangeText={setDescription}
+            multiline={true}
+            numberOfLines={4}
+            textAlignVertical="top"
+          />
+        </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Description</Text>
-                <TextInput
-                  style={styles.textArea}
-                  placeholder="Enter Description"
-                  placeholderTextColor={secondaryColor}
-                  value={description}
-                  onChangeText={setDescription}
-                  multiline={true}
-                  numberOfLines={4}
-                  textAlignVertical="top"
-                />
-              </View>
-              <View style={styles.modalButtons}>
-
-                <TouchableOpacity
-                  style={[styles.button, styles.cancelButton]}
-                  onPress={() => {
-                    setModalVisible(false);
-                    resetInputFields();
-                  }}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={saveExpense}>
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+        {/* Buttons */}
+        <View style={styles.modalButtons}>
+          <TouchableOpacity
+            style={[styles.button, styles.cancelButton]}
+            onPress={() => {
+              setModalVisible(false);
+              resetInputFields();
+            }}
+          >
+            <Text style={styles.buttonText}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={saveExpense}>
+            <Text style={styles.buttonText}>Save</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  </TouchableWithoutFeedback>
+</Modal>
       </View>
     </GestureHandlerRootView>
   );

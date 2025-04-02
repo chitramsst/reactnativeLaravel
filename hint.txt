@@ -225,3 +225,75 @@ rm -rf node_modules ios/Pods ios/build
 yarn install  # or npm install
 cd ios && pod install --verbose && cd ..
 npx react-native run-ios
+
+
+
+Run on Ios
+
+To run your React Native app on an iPhone 15 Pro, you need to enable developer mode and trust your development certificate. Follow these steps:
+
+1. Enable Developer Mode on iPhone 15 Pro
+Since iOS 16, Apple requires you to enable Developer Mode for sideloading apps.
+
+Go to:
+Settings → Privacy & Security → Developer Mode
+
+Toggle it ON and restart your iPhone.
+
+After restarting, confirm enabling Developer Mode.
+
+2. Trust Your Developer Certificate
+When running your app on a real iPhone via Xcode, you may see an "Untrusted Developer" message.
+
+A. Get Your Developer Profile in Xcode
+Open your React Native project in Xcode:
+
+bash
+Copy
+Edit
+open ios/MyApp.xcworkspace
+In the top bar, select your iPhone 15 Pro as the target.
+
+Go to Xcode → Settings → Accounts.
+
+Sign in with your Apple ID (you can use a free Apple ID).
+
+Under Signing & Capabilities, select Automatically manage signing.
+
+Xcode will generate a provisioning profile.
+
+B. Trust the Certificate on Your iPhone
+Go to Settings → General → VPN & Device Management.
+
+Under Developer App, tap your Apple ID.
+
+Tap Trust and confirm.
+
+3. Run Your App on the iPhone
+Now, in your terminal, run:
+
+bash
+Copy
+Edit
+npx react-native run-ios --device
+Or, in Xcode, click the ▶️ Run button.
+
+
+1. ipconfig getifaddr en0
+
+here you can get ipaddress
+
+2. In api url
+const API_URL =
+  Platform.OS === 'android' ? 'http://10.0.2.2:8000/api' : 'http://192.168.1.5:8000/api';
+
+2. In Laravel side:
+
+php artisan serve --host=0.0.0.0 --port=8000
+http://192.168.1.5:8000/
+
+3. In Laravel .env file
+
+APP_URL=http://192.168.1.5:8000
+
+Then you can access localhost database

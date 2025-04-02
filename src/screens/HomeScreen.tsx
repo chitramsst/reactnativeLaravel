@@ -25,13 +25,13 @@ const HomeScreen = () => {
 
     useEffect(() => {
       if (isAuthenticated && route.name !== 'Dashboard') {
-        navigation.navigate('DashboardMain');
+        navigation.navigate('Dashboard');
       }
     }, [isAuthenticated, navigation, route.name]); 
   
 
   const handleScreenPress = () => {
-    navigation.navigate(isAuthenticated ? 'DashboardMain' : 'Login');
+    navigation.navigate(isAuthenticated ? 'Dashboard' : 'Login');
   };
 
   return (

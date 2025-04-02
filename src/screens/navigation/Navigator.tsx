@@ -28,7 +28,7 @@ const Tab = createBottomTabNavigator();
 const DashboardStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="DashboardMain" component={DashboardScreen} />
+      <Stack.Screen name="Dashboard" component={DashboardScreen} />
       <Stack.Screen name="ExpenseCategory" component={ExpenseCategoryScreen} />
       <Stack.Screen name="Reminder" component={ReminderScreen} />
     </Stack.Navigator>

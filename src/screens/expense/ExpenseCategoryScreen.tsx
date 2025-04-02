@@ -148,7 +148,7 @@ const ExpenseCategoryScreen = () => {
         {/* Title Section with Add Button */}
         <View style={styles.titleContainer}>
           {/* Back Arrow Icon */}
-          <TouchableOpacity onPress={() => navigation.navigate("DashboardMain")} style={styles.backIcon}>
+          <TouchableOpacity onPress={() => navigation.navigate("Dashboard")} style={styles.backIcon}>
             <Ionicons name="arrow-back" size={20} color={primaryColor} />
           </TouchableOpacity>
 

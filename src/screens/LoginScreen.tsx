@@ -38,7 +38,7 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (isAuthenticated && route.name !== 'Dashboard') {
-      navigation.navigate('DashboardMain');
+      navigation.navigate('Dashboard');
     }
   }, [isAuthenticated, navigation, route.name]); 
 
