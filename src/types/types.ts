@@ -5,6 +5,7 @@ export type RootStackParamList = {
     Login: undefined;
     Dashboard: undefined;
     DashboardTab: undefined;
+    Note: undefined;
   };
 
   interface AuthState {

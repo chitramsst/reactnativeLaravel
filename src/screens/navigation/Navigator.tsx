@@ -17,7 +17,7 @@ import HomeScreen from "../HomeScreen";
 import ExpenseScreen from "../expense/ExpenseScreen";
 import ExpenseCategoryScreen from "../expense/ExpenseCategoryScreen";
 import ReminderScreen from "../reminder/ReminderScreen";
-import { RootStackParamList } from '../../types/types.ts';
+import NotesScreen from "../notes/NotesScreen.tsx";
 import {RootState} from '../../types/types.ts'
 
 
@@ -31,6 +31,7 @@ const DashboardStackNavigator = () => {
       <Stack.Screen name="Dashboard" component={DashboardScreen} />
       <Stack.Screen name="ExpenseCategory" component={ExpenseCategoryScreen} />
       <Stack.Screen name="Reminder" component={ReminderScreen} />
+      <Stack.Screen name="Note" component={NotesScreen} />
     </Stack.Navigator>
   );
 };

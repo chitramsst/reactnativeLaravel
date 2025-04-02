@@ -366,8 +366,9 @@ const ExpenseScreen = () => {
 
                 {/* ✅ Scrollable Content */}
                 <ScrollView
-                  contentContainerStyle={{ paddingBottom: 10 }}
+                  contentContainerStyle={{ flexGrow: 1, paddingBottom: 10 }}
                   showsVerticalScrollIndicator={false}
+                   keyboardShouldPersistTaps="handled"
                 >
 
                   {/* Name Input */}
@@ -390,24 +391,24 @@ const ExpenseScreen = () => {
                         {searchText || "Select Category"}
                       </Text>
                     </TouchableOpacity>
-                     {/* Category Picker Modal */}
-                <Modal visible={modalCategoyVisible} animationType="slide" transparent>
-                  <TouchableWithoutFeedback onPress={() => setModalCategoryVisible(false)}>
-                    <View style={styles.modalCategoryContainer}>
-                      <View style={styles.modalCategoryContent}>
-                        <FlatList
-                          data={filteredCategories.length ? filteredCategories : categories}
-                          keyExtractor={(item) => item.id.toString()}
-                          renderItem={({ item }) => (
-                            <TouchableOpacity style={styles.categoryModelItem} onPress={() => handleSelectCategory(item)}>
-                              <Text style={styles.categoryModelText}>{item.name}</Text>
-                            </TouchableOpacity>
-                          )}
-                        />
-                      </View>
-                    </View>
-                  </TouchableWithoutFeedback>
-                </Modal>
+                    {/* Category Picker Modal */}
+                    <Modal visible={modalCategoyVisible} animationType="slide" transparent>
+                      <TouchableWithoutFeedback onPress={() => setModalCategoryVisible(false)}>
+                        <View style={styles.modalCategoryContainer}>
+                          <View style={styles.modalCategoryContent}>
+                            <FlatList
+                              data={filteredCategories.length ? filteredCategories : categories}
+                              keyExtractor={(item) => item.id.toString()}
+                              renderItem={({ item }) => (
+                                <TouchableOpacity style={styles.categoryModelItem} onPress={() => handleSelectCategory(item)}>
+                                  <Text style={styles.categoryModelText}>{item.name}</Text>
+                                </TouchableOpacity>
+                              )}
+                            />
+                          </View>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    </Modal>
 
                   </View>
 

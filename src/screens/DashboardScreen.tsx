@@ -111,7 +111,7 @@ const DashboardScreen = () => {
     <View style={styles.navButtonWrapper}>
         <TouchableOpacity 
             style={[styles.navButton]} 
-            onPress={() => navigation.navigate('ExpenseCategory')}
+            onPress={() => navigation.navigate('Note')}
         >
             <Ionicons name="checkmark-circle" size={24} color={buttonTextColor} />
         </TouchableOpacity>
