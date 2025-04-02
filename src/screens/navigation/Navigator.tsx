@@ -96,7 +96,7 @@ const DashboardTabNavigator = () => {
         }}
         >
           <Ionicons
-            name={iconName ?? 'alert-circle'}
+            name={iconName ?? 'home'}
             size={size/1.5} // ✅ Adjusted for perfect fit
             color={focused ? "#000" : color}
           /> 
@@ -138,7 +138,7 @@ const DashboardTabNavigator = () => {
     headerShown: false,
   })}
 >
-  <Tab.Screen name="Dashboard" component={DashboardStackNavigator} />
+  <Tab.Screen name="DashboardTab" component={DashboardStackNavigator} />
   <Tab.Screen name="Expenses" component={ExpenseScreen} />
   <Tab.Screen
     name="Logout"

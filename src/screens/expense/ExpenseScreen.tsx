@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
   KeyboardAvoidingView,
-  Keyboard,View, Button, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, StyleSheet, ActivityIndicator, ScrollView, Alert
+  Keyboard, View, Button, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, StyleSheet, ActivityIndicator, ScrollView, Alert
 } from "react-native";
 import { api } from "../../config/api"; // Import Axios instance
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -21,7 +21,7 @@ const ExpenseScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   interface Expense {
-    id: string | number; 
+    id: string | number;
     name: string;
     amount: string;
     category: number;
@@ -86,8 +86,8 @@ const ExpenseScreen = () => {
       setCategories(response.data.data);
       // Alert.alert("Categories", JSON.stringify(response.data.data)); // Proper alert usage
     } catch (error) {
-     // console.error("Error fetching categories:", error.response?.data || error.message);
-     // Alert.alert("Error", error.response?.data?.message || "Failed to fetch categories");
+      // console.error("Error fetching categories:", error.response?.data || error.message);
+      // Alert.alert("Error", error.response?.data?.message || "Failed to fetch categories");
     } finally {
       setLoading(false);
     }
@@ -100,8 +100,8 @@ const ExpenseScreen = () => {
       const response = await api.get("/expense/get-expenses");
       setData(response.data.data);
     } catch (error) {
-        const axiosError = error as AxiosError;
-        console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
+      const axiosError = error as AxiosError;
+      console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
     } finally {
       setLoading(false);
     }
@@ -111,7 +111,7 @@ const ExpenseScreen = () => {
   const handleSearch = (text: string) => {
     setSearchText(text);
     if (text.trim()) {
-      
+
       const filtered = categories.filter(category =>
         category.name.toLowerCase().includes(text.toLowerCase())
       );
@@ -121,7 +121,7 @@ const ExpenseScreen = () => {
     }
   };
   // Select category
-  const handleSelectCategory = (category : Category) => {
+  const handleSelectCategory = (category: Category) => {
     setSearchText(category.name); // Show category name in input
     setSelectedCategory(category); // Store category ID
     setModalCategoryVisible(false);
@@ -147,8 +147,8 @@ const ExpenseScreen = () => {
       if (editExpense) {
         await api.post(`/expense/edit/${editExpense.id}`, expenseData);
 
-        setData(prevData => 
-          prevData.map(exp => 
+        setData(prevData =>
+          prevData.map(exp =>
             exp.id === editExpense.id ? { ...exp, ...expenseData } : exp
           )
         );
@@ -205,7 +205,7 @@ const ExpenseScreen = () => {
               }
             } catch (error) {
               const axiosError = error as AxiosError;
-        console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
+              console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
               Alert.alert("Error", "Failed to delete expense.");
             }
           },
@@ -227,7 +227,7 @@ const ExpenseScreen = () => {
 
 
   // Fetch categories from API
-  const editItemFill = async (item : any) => {
+  const editItemFill = async (item: any) => {
     setLoading(true);
     try {
       setEditExpense(item);
@@ -245,14 +245,14 @@ const ExpenseScreen = () => {
       setModalVisible(true);
     } catch (error) {
       const axiosError = error as AxiosError;
-        console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
+      console.error("Error fetching categories:", axiosError.response?.data || axiosError.message);
     } finally {
       setLoading(false);
     }
   };
 
 
-  const renderRightActions = (item : any) => (
+  const renderRightActions = (item: any) => (
     <View style={styles.swipeActions}>
       <TouchableOpacity style={styles.editButton} onPress={() => {
         editItemFill(item);
@@ -272,7 +272,7 @@ const ExpenseScreen = () => {
         {/* Title Section with Add Button */}
         <View style={styles.titleContainer}>
           {/* Back Arrow Icon */}
-          <TouchableOpacity onPress={() => navigation.navigate('Dashboard')} style={styles.backIcon}>
+          <TouchableOpacity onPress={() => navigation.navigate('DashboardTab')} style={styles.backIcon}>
             <Ionicons name="arrow-back" size={20} color={primaryColor} />
           </TouchableOpacity>
 
@@ -310,13 +310,13 @@ const ExpenseScreen = () => {
 
                 return (
                   <Swipeable
-                 //   ref={(ref) => (item.id ? (swipeableRefs.current[item.id] = ref) : null)}
-                    
-                 ref={(ref) => {
-                  if (item.id !== undefined && item.id !== null) {
-                    swipeableRefs.current[String(item.id)] = ref;
-                  }
-                }}
+                    //   ref={(ref) => (item.id ? (swipeableRefs.current[item.id] = ref) : null)}
+
+                    ref={(ref) => {
+                      if (item.id !== undefined && item.id !== null) {
+                        swipeableRefs.current[String(item.id)] = ref;
+                      }
+                    }}
 
                     renderRightActions={() => renderRightActions(item)}
                     overshootRight={false}
@@ -353,36 +353,44 @@ const ExpenseScreen = () => {
             />
           </View>
         )}
-<Modal visible={modalVisible} animationType="slide" transparent>
-  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.modalContainer}
-    >
-      <View style={styles.modalContent}>
-        <Text style={styles.modalTitle}>{editExpense ? "Edit Expense" : "Add Expense"}</Text>
+        <Modal visible={modalVisible} animationType="slide" transparent>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "height" : "height"}
+              style={styles.modalContainer}
+            >
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>
+                  {editExpense ? "Edit Expense" : "Add Expense"}
+                </Text>
 
-        {/* Name Input */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Expense Name"
-            placeholderTextColor={secondaryColor}
-            value={expenseName}
-            onChangeText={setExpenseName}
-          />
-        </View>
-{/* Category Picker */}
-<View style={styles.inputGroup}>
-                <Text style={styles.label}>Category</Text>
-                <TouchableOpacity onPress={() => setModalCategoryVisible(true)} style={styles.input}>
-                  <Text style={{ color: searchText ? primaryColor : secondaryColor }}>
-                    {searchText || "Select Category"}
-                  </Text>
-                </TouchableOpacity>
+                {/* ✅ Scrollable Content */}
+                <ScrollView
+                  contentContainerStyle={{ paddingBottom: 10 }}
+                  showsVerticalScrollIndicator={false}
+                >
 
-                {/* Category Picker Modal */}
+                  {/* Name Input */}
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Name</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Enter Expense Name"
+                      placeholderTextColor={secondaryColor}
+                      value={expenseName}
+                      onChangeText={setExpenseName}
+                    />
+                  </View>
+
+                  {/* Category Picker */}
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Category</Text>
+                    <TouchableOpacity onPress={() => setModalCategoryVisible(true)} style={styles.input}>
+                      <Text style={{ color: searchText ? primaryColor : secondaryColor }}>
+                        {searchText || "Select Category"}
+                      </Text>
+                    </TouchableOpacity>
+                     {/* Category Picker Modal */}
                 <Modal visible={modalCategoyVisible} animationType="slide" transparent>
                   <TouchableWithoutFeedback onPress={() => setModalCategoryVisible(false)}>
                     <View style={styles.modalCategoryContainer}>
@@ -401,111 +409,64 @@ const ExpenseScreen = () => {
                   </TouchableWithoutFeedback>
                 </Modal>
 
-              </View>
+                  </View>
 
-        {/* Amount Input */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Amount (Rs.)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Expense Amount"
-            placeholderTextColor={secondaryColor}
-            value={amount}
-            onChangeText={handleAmountChange}
-            keyboardType="numeric" // ✅ Ensures only numbers
-          />
-        </View>
-        <View style={styles.inputGroup}>
-                <Text style={styles.label}>Expense Date</Text>
-                <TouchableOpacity onPress={() => showCurrentDatePicker(true)}>
-                  <Text style={styles.input}>
-                    {date.toDateString()} {/* Display selected date */}
-                  </Text>
-                </TouchableOpacity>
+                  {/* Amount Input */}
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Amount (Rs.)</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Enter Expense Amount"
+                      placeholderTextColor={secondaryColor}
+                      value={amount}
+                      onChangeText={handleAmountChange}
+                      keyboardType="numeric"
+                    />
+                  </View>
 
-                {Platform.OS === "ios" && currentDatePicker && showPicker && (
-                  <Modal transparent animationType="slide" visible={currentDatePicker}>
-                    <View style={styles.modalDateContainer}>
-                      <View style={styles.modalDateContent}>
-                        <DateTimePicker
-                          value={date}
-                          mode="date"
-                          display="inline" // Works better for iOS
-                          style={{ height: '100%', width: '100%', justifyContent: "center", alignItems: "center" }}
-                          onChange={(event, selectedDate) => {
-                            if (selectedDate) {
-                              setCurrentDate(selectedDate);
-                              console.log("Selected Date:", selectedDate);
-                             // setTimeout(() => setShowPicker(false), 100); // Delay to ensure it closes
-                            } 
-                            //showCurrentDatePicker(false); // ✅ Ensure modal closes
-                            //setShowPicker(false); // ✅ Ensure the picker disappears
-                          }}
-                        />
-                        <TouchableOpacity
-                         
-                          onPress={() => {
-                            showCurrentDatePicker(false);
-                            setShowPicker(false);
-                          }}
-                        >
-                          <Text style={styles.buttonText}>Done</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </Modal>
-                )}
+                  {/* Expense Date */}
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Expense Date</Text>
+                    <TouchableOpacity onPress={() => showCurrentDatePicker(true)}>
+                      <Text style={styles.input}>{date.toDateString()}</Text>
+                    </TouchableOpacity>
+                  </View>
 
-                {/* Date Picker Component */}
-                {Platform.OS === "android" && currentDatePicker && (
-                  <DateTimePicker
-                    value={date}
-                    mode="date"
-                    display="calendar"
-                    onChange={(event, selectedDate) => {
-                      if (selectedDate) {
-                        setCurrentDate(selectedDate);
-                      }
-                      showCurrentDatePicker(false); // Close picker after selection
+                  {/* Description Input */}
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Description</Text>
+                    <TextInput
+                      style={styles.textArea}
+                      placeholder="Enter Description"
+                      placeholderTextColor={secondaryColor}
+                      value={description}
+                      onChangeText={setDescription}
+                      multiline={true}
+                      numberOfLines={4}
+                      textAlignVertical="top"
+                    />
+                  </View>
+                </ScrollView>
+
+                {/* ✅ Fixed Buttons at Bottom */}
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.cancelButton]}
+                    onPress={() => {
+                      setModalVisible(false);
+                      resetInputFields();
                     }}
-                  />
-                )}
-
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button} onPress={saveExpense}>
+                    <Text style={styles.buttonText}>Save</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-        {/* Description Input */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Description</Text>
-          <TextInput
-            style={styles.textArea}
-            placeholder="Enter Description"
-            placeholderTextColor={secondaryColor}
-            value={description}
-            onChangeText={setDescription}
-            multiline={true}
-            numberOfLines={4}
-            textAlignVertical="top"
-          />
-        </View>
-
-        {/* Buttons */}
-        <View style={styles.modalButtons}>
-          <TouchableOpacity
-            style={[styles.button, styles.cancelButton]}
-            onPress={() => {
-              setModalVisible(false);
-              resetInputFields();
-            }}
-          >
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={saveExpense}>
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
-  </TouchableWithoutFeedback>
-</Modal>
+            </KeyboardAvoidingView>
+          </TouchableWithoutFeedback>
+        </Modal>
       </View>
     </GestureHandlerRootView>
   );
