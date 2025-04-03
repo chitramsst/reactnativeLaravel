@@ -19,6 +19,7 @@ import {
     primaryColor,
     secondaryColor,
     designBackgoundColor,
+    textColor,
 } from '../../utils/globalStyle';
 
 import { AxiosError } from "axios";
@@ -210,18 +211,19 @@ const NotesScreen = () => {
 
                         {/* Context Menu Modal */}
                         <Modal visible={modalContextVisible} transparent animationType="fade">
-                            <View style={styles.modalContainer}>
-                                <View style={styles.contextMenu}>
-                                    <TouchableOpacity style={styles.menuButton} onPress={handleEditNote}>
-                                        <Ionicons name="pencil" size={20} color="#000" />
-                                        <Text>Edit</Text>
+                            <View style={styles.modalContextContainer}>
+                                <View style={styles.modalContextContent}>
+                                <TouchableOpacity style={styles.menuButton} onPress={handleEditNote}>
+                                <Text style={{ color: primaryColor }}>Edit</Text>
+                                        <Ionicons name="pencil" size={18} color={primaryColor} />
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.menuButton} onPress={handleDeleteNote}>
-                                        <Ionicons name="trash" size={20} color="red" />
-                                        <Text>Delete</Text>
+                                        <Text style={{ color: primaryColor }}>Delete</Text>
+                                        <Ionicons name="close" size={16} color="red" />
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.menuButton} onPress={() => setModalContextVisible(false)}>
-                                        <Text>Cancel</Text>
+                                        <Text style={{ color: primaryColor }}>Cancel</Text>
+                                        {/* <Ionicons name="close-circle" size={20} color="red" /> */}
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -417,10 +419,16 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: "center",
     },
+    modalContextContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.7)" },
+    modalContextContent: { backgroundColor: "#1e1e1e",  borderRadius: 10, width: '50%'},
     menuButton: {
         flexDirection: "row",
         alignItems: "center",
-        padding: 10,
+        justifyContent: "space-around",
+        paddingVertical: 10,
+        color: "#fff",
+        width: '100%',
+        borderWidth:0.5, borderBottomColor: secondaryColor 
     },
     editModal: {
         backgroundColor: "#fff",
