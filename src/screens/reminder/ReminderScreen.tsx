@@ -200,7 +200,7 @@ const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     return (
       <View style={styles.card}>
         <View style={styles.cardContent}>
-          <Ionicons name="alarm" size={24} color="white" style={styles.alarmIcon} />
+          <Ionicons name="alarm" size={22} color="white" style={styles.alarmIcon} />
           <View style={styles.textContainer}>
             <Text style={styles.reminderTitle}>{item.text}</Text>
             <Text style={styles.reminderDate}>{reminderTime.toLocaleString()}</Text>
@@ -208,7 +208,7 @@ const navigation = useNavigation<NavigationProp<RootStackParamList>>();
           <TouchableOpacity onPress={() => isChecked && handleDeleteReminder(item.id)}>
             <Ionicons
               name={isChecked ? "checkbox-outline" : "square-outline"}
-              size={24}
+              size={22}
               color="white"
             />
           </TouchableOpacity>
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   alarmIcon: {
-    padding: 10,
+    padding: 5,
     backgroundColor: "#ff6b6b",
     borderRadius: 8,
   },
