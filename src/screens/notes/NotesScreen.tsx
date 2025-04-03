@@ -9,6 +9,8 @@ import {
     Modal,
     StyleSheet,
     ActivityIndicator,
+    TouchableWithoutFeedback,
+    Keyboard
 } from 'react-native';
 import Toast from "react-native-toast-message";
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -211,22 +213,38 @@ const NotesScreen = () => {
 
                         {/* Context Menu Modal */}
                         <Modal visible={modalContextVisible} transparent animationType="fade">
-                            <View style={styles.modalContextContainer}>
-                                <View style={styles.modalContextContent}>
-                                <TouchableOpacity style={styles.menuButton} onPress={handleEditNote}>
-                                <Text style={{ color: primaryColor }}>Edit</Text>
-                                        <Ionicons name="pencil" size={18} color={primaryColor} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.menuButton} onPress={handleDeleteNote}>
-                                        <Text style={{ color: primaryColor }}>Delete</Text>
-                                        <Ionicons name="close" size={16} color="red" />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.menuButton} onPress={() => setModalContextVisible(false)}>
-                                        <Text style={{ color: primaryColor }}>Cancel</Text>
-                                        {/* <Ionicons name="close-circle" size={20} color="red" /> */}
-                                    </TouchableOpacity>
+                            <TouchableWithoutFeedback onPress={() => setModalContextVisible(false)}>
+                                <View style={styles.modalContextContainer}>
+                                    <View style={styles.modalContextContent}>
+                                        <Text
+                                            style={[
+                                                {
+                                                    borderBottomColor: secondaryColor,
+                                                    borderBottomWidth: 0.5,  // Corrected borderWidth
+                                                    textAlign: "center",  // Center text properly
+                                                    padding: 10,
+                                                    textShadowColor: "red",
+                                                    fontSize: 18, fontWeight: "bold", marginBottom: 10, color: secondaryColor
+                                                }
+                                            ]}
+                                        >
+                                            {selectedNote ? selectedNote.title : "Actions"}
+                                        </Text>
+                                        <TouchableOpacity style={styles.menuButton} onPress={handleEditNote}>
+                                            <Text style={{ color: primaryColor }}>Edit</Text>
+                                            <Ionicons name="pencil" size={18} color={primaryColor} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.menuButton} onPress={handleDeleteNote}>
+                                            <Text style={{ color: primaryColor }}>Delete</Text>
+                                            <Ionicons name="close" size={16} color="red" />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.menuButton} onPress={() => setModalContextVisible(false)}>
+                                            <Text style={{ color: primaryColor }}>Cancel</Text>
+                                            {/* <Ionicons name="close-circle" size={20} color="red" /> */}
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                            </View>
+                            </TouchableWithoutFeedback>
                         </Modal>
                     </View>
                 )}
@@ -420,7 +438,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     modalContextContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.7)" },
-    modalContextContent: { backgroundColor: "#1e1e1e",  borderRadius: 10, width: '50%'},
+    modalContextContent: { backgroundColor: "#1e1e1e", borderRadius: 10, width: '50%' },
     menuButton: {
         flexDirection: "row",
         alignItems: "center",
@@ -428,7 +446,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         color: "#fff",
         width: '100%',
-        borderWidth:0.5, borderBottomColor: secondaryColor 
+        borderWidth: 0.5, borderBottomColor: secondaryColor
     },
     editModal: {
         backgroundColor: "#fff",

@@ -309,5 +309,5 @@ Once you have the UDID of iPhone 15 Pro, you can launch your React Native app on
 
 npx react-native run-ios --udid <YOUR_UDID>
 Example:
-npx react-native run-ios --udid 12345678-ABCD-1234-5678-ABCDEFGHIJKL
+ npx react-native run-ios --udid C033D137-09AD-46CC-B096-36D93458D2BC
 _____________________________________________________________________________
