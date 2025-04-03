@@ -25,7 +25,6 @@ import { AxiosError } from "axios";
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../types/types.ts';
-import Swipeable from "react-native-gesture-handler/Swipeable";
 import { api } from "../../config/api";
 
 interface Note {
@@ -54,13 +53,6 @@ const NotesScreen = () => {
     const filteredNotes = notes.filter(cat =>
         cat.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
-    interface SwipeableRefs {
-        [key: string]: Swipeable | null;
-    }
-
-    const swipeableRefs = useRef<SwipeableRefs>({});
-
 
     const handleEditNote = () => {
         setTitle(title);
@@ -92,24 +84,6 @@ const NotesScreen = () => {
         return colors[index];
     };
 
-
-    const renderRightActions = (item: Note) => (
-        <View style={styles.swipeActions}>
-            <TouchableOpacity style={styles.editButton} onPress={() => {
-                setEditNote(item);
-                setTitle(item.title);
-                setContent(item.content);
-                setModalVisible(true);
-            }}>
-                <Ionicons name="pencil" size={20} color='#000' />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteNote(item.id)}>
-                {/* <Text style={styles.buttonText}>Delete</Text> */}
-                <Ionicons name="close" size={20} color='#000' />
-            </TouchableOpacity>
-        </View>
-    );
-
     // Add or Edit a note
     const saveNote = async () => {
         if (!title.trim()) return;
@@ -118,9 +92,6 @@ const NotesScreen = () => {
             if (editNote) {
                 await api.post(`/note/edit/${editNote.id}`, { title: title, content: content });
                 setNotes(notes.map(note => note.id === editNote.id ? { ...note, title: title, content: content } : note));
-                if (editNote && swipeableRefs.current[editNote.id]) {
-                    swipeableRefs.current[editNote.id]?.close();
-                }
             } else {
                 const response = await api.post("/note/add", { title: title, content: content });
                 setNotes([response.data.data, ...notes]);
@@ -177,10 +148,6 @@ const NotesScreen = () => {
                             }
 
                             setNotes(notes.filter(cat => cat.id !== id));
-
-                            if (swipeableRefs.current[id]) {
-                                swipeableRefs.current[id].close();
-                            }
                             setModalContextVisible(false);
 
                         } catch (error) {
@@ -230,58 +197,8 @@ const NotesScreen = () => {
                     <ActivityIndicator size="large" color="blue" />
                 ) : (
                     <View style={{ height: 500 }}>
-                        {/* <FlatList
-                            data={filteredNotes}
-                            keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
-                            renderItem={({ item, index }) => {
-                                const isLastItem = index === filteredNotes.length - 1;
-
-                                return (
-                                    <Swipeable
-                                     
-
-                                        ref={(ref) => {
-                                            if (item.id) {
-                                                swipeableRefs.current[item.id] = ref;  
-                                            }
-                                        }}
-
-                                        renderRightActions={() => renderRightActions(item)}
-                                        overshootRight={false}
-                                    >
-                                        <View
-                                            style={[
-                                                styles.noteItem,
-                                                isLastItem && styles.lastNoteItem,
-                                            ]}
-                                        >
-                                            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                                               
-                                                <View style={[styles.iconCircle, { backgroundColor: getColorForLetter(item.title.charAt(0).toUpperCase()) }]}>
-                                                    <Text style={styles.iconText}>
-                                                        {item.title.charAt(0).toUpperCase()}
-                                                    </Text>
-                                                </View>
-
-                                               
-                                                <Text style={styles.noteText}>{item.title}</Text>
-
-                                               
-                                                <View style={{ marginLeft: "auto" }}>
-                                                    <Ionicons name="chevron-forward" size={18} color={secondaryColor} style={styles.rightIcon} />
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </Swipeable>
-                                );
-                            }}
-                            showsVerticalScrollIndicator={true} 
-                            scrollIndicatorInsets={{ right: 1 }} 
-                            contentContainerStyle={styles.scrollContainer} 
-                        /> */}
-
                         <FlatList
-                            data={notes}
+                            data={filteredNotes}
                             keyExtractor={(item) => item.id.toString()}
                             numColumns={3}
                             renderItem={({ item }) => (
@@ -309,9 +226,6 @@ const NotesScreen = () => {
                                 </View>
                             </View>
                         </Modal>
-
-
-
                     </View>
                 )}
 
@@ -399,14 +313,7 @@ const styles = StyleSheet.create({
         marginLeft: 10, // ✅ Space between text & icon
     },
     // noteText: { fontSize: 14, color: primaryColor },
-    swipeActions: { flexDirection: 'row', justifyContent: 'flex-end' },
     //editButton: { backgroundColor: secondaryColor, padding: 7, justifyContent: 'center', borderRadius: 10, marginHorizontal: 5 },
-
-    swipeContainer: {
-        width: 100,
-        justifyContent: 'center',
-        alignItems: 'flex-end',
-    },
 
     editButton: {
         backgroundColor: buttonColor,
