@@ -55,7 +55,13 @@ const NotesScreen = () => {
 
     const swipeableRefs = useRef<SwipeableRefs>({});
 
-    const getColorForLetter = (letter) => {
+ 
+
+    useEffect(() => {
+        fetchNotes();
+    }, []);
+
+    const getColorForLetter = (letter : String) => {
         const colors = [
           '#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#33FFF5', 
           '#F5FF33', '#A133FF', '#FF8C33', '#33FFA1', '#A1FF33'
@@ -65,10 +71,6 @@ const NotesScreen = () => {
         return colors[index];
       };
       
-
-    useEffect(() => {
-        fetchNotes();
-    }, []);
 
     const renderRightActions = (item: Note) => (
         <View style={styles.swipeActions}>

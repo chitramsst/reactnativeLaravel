@@ -107,6 +107,16 @@ const ExpenseScreen = () => {
     }
   };
 
+  const getColorForLetter = (letter : String) => {
+    const colors = [
+      '#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#33FFF5', 
+      '#F5FF33', '#A133FF', '#FF8C33', '#33FFA1', '#A1FF33'
+    ];
+    
+    const index = letter.charCodeAt(0) % colors.length; // Consistent index
+    return colors[index];
+  };
+  
   // Filter categories based on input
   const handleSearch = (text: string) => {
     setSearchText(text);
@@ -329,7 +339,7 @@ const ExpenseScreen = () => {
                     >
                       <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
                         {/* ✅ Round Icon with First Letter */}
-                        <View style={styles.iconCircle}>
+                         <View style={[styles.iconCircle, { backgroundColor: getColorForLetter(item.name.charAt(0).toUpperCase()) }]}>
                           <Text style={styles.iconText}>
                             {item.name.charAt(0).toUpperCase()}
                           </Text>
