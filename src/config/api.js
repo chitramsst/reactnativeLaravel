@@ -3,7 +3,7 @@ import { store } from '../redux/store'; // Ensure store is imported correctly
 import { Platform } from 'react-native';
 
 const API_URL =
-  Platform.OS === 'android' ? 'http://10.0.2.2:8000/api' : 'http://192.168.1.5:8000/api';
+  Platform.OS === 'android' ? 'http://10.0.2.2:8000/api' : 'http://192.168.1.9:8000/api';
 
 // ✅ Create Axios instance
 const api = axios.create({

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -160,6 +160,14 @@ const DashboardTabNavigator = () => {
 
 const AppNavigator = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setReady(true), 300); // 300ms delay for rehydration
+    return () => clearTimeout(timeout);
+  }, []);
+
+  if (!ready) return null;
 
   return (
     <NavigationContainer>
